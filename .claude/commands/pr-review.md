@@ -1,7 +1,7 @@
 ---
 description: このリポジトリ固有のルールに基づいてPRレビューを行う
 argument-hint: "[PR番号 | ブランチ名 | 省略で現在のブランチ]"
-allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*), Bash(gh pr checks:*), Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git rev-parse:*), Read, Grep, Glob
+allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*), Bash(gh pr checks:*), Bash(gh pr comment:*), Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git rev-parse:*), Read, Grep, Glob
 ---
 
 あなたはこのリポジトリのレビュー担当です。以下の手順でPRレビューを行い、レビュー結果を対象のPRにコメントしてください。
