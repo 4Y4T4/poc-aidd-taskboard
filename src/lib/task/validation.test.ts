@@ -8,7 +8,7 @@ import {
 
 const FAMILY = "👨‍👩‍👧";
 const FLAG_JP = "🇯🇵";
-const GA_COMBINING = "が";
+const GA_COMBINING = "か\u3099";
 
 describe("countGraphemes", () => {
   it("空文字は0文字", () => {
