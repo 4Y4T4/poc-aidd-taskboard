@@ -17,18 +17,18 @@
 
 | 分類 | 使用技術 |
 | --- | --- |
-| 言語 | TypeScript |
+| 言語 | TypeScript 6.0 |
 | フレームワーク | Next.js 16(App Router) |
 | UI | React 19 |
 | スタイリング | Tailwind CSS 4 |
 | ビルド/開発サーバー | Turbopack |
 | ドラッグ&ドロップ | @dnd-kit/core |
-| テスト | Vitest 4 |
+| テスト | Vitest 5 |
 | Lint | ESLint 9(eslint-config-next) |
 
 ## 動作環境
 
-- Node.js 20.19 以上(`package.json` の `engines` で指定)
+- Node.js 22.12 以上の 22 系、24 系、または 26 以上(`package.json` の `engines` で指定。Vitest 5 の動作要件に合わせています)
 - npm
 
 ## セットアップ
