@@ -26,11 +26,11 @@ export function validateTaskInput(input: TaskInput): TaskInputValidationResult {
   if (title === "") {
     errors.title = "タイトルを入力してください";
   } else if (countGraphemes(title) > TITLE_MAX) {
-    errors.title = "タイトルは50文字以内で入力してください";
+    errors.title = `タイトルは${TITLE_MAX}文字以内で入力してください`;
   }
 
   if (countGraphemes(description) > DESCRIPTION_MAX) {
-    errors.description = "説明は500文字以内で入力してください";
+    errors.description = `説明は${DESCRIPTION_MAX}文字以内で入力してください`;
   }
 
   if (errors.title !== undefined || errors.description !== undefined) {
