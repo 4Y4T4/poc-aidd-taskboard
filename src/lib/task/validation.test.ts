@@ -54,7 +54,7 @@ describe("validateTaskInput", () => {
       ["タブのみ", "\t\t"],
       ["改行のみ", "\n\r\n"],
       ["スペース・タブ・改行の混在", " \t\n "],
-      ["全角スペースのみ", "　　"],
+      ["全角スペースのみ", "\u3000\u3000"],
     ])("タイトルが%sならエラー", (_, title) => {
       expect(validateTaskInput({ title, description: "" })).toEqual({
         ok: false,
@@ -166,7 +166,7 @@ describe("validateTaskInput", () => {
 
     it("タイトルと説明の前後の全角スペースを除去した値を返す", () => {
       expect(
-        validateTaskInput({ title: "　買い物　", description: "　牛乳を買う　" }),
+        validateTaskInput({ title: "\u3000買い物\u3000", description: "\u3000牛乳を買う\u3000" }),
       ).toEqual({
         ok: true,
         value: { title: "買い物", description: "牛乳を買う" },
