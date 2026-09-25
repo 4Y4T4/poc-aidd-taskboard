@@ -18,9 +18,9 @@
 | Issue | 作業 | 担当 | 依存 | 主な参照章 | ユニットテスト(6章の観点) |
 | --- | --- | --- | --- | --- | --- |
 | #6 | プロジェクトの初期構築(Next.js・Tailwind CSS・Vitest・dnd-kit) | frontend-developer | なし | CLAUDE.md「技術スタック」、4.3、6章 | なし(ダミーテストは置かない) |
-| #7 | タスクのデータモデルと入力バリデーション | backend-developer | #6 | 3.1、3.2、4.2、5章 #1〜#4 | 入力値のバリデーション |
+| #7 | タスクのデータモデルと入力バリデーション | backend-developer | #6 | 3.1、3.2、4.2、5章 No.1〜4 | 入力値のバリデーション |
 | #8 | タスクの作成・列移動ロジック | backend-developer | #7 | 3.1、3.3、3.4、4.2、4.3 | タスクの作成、タスクの列移動 |
-| #9 | localStorage への保存・読み込み | backend-developer | #7 | 3.5、5章 #8〜#13 | localStorage からの読み込み・保存 |
+| #9 | localStorage への保存・読み込み | backend-developer | #7 | 3.5、5章 No.8〜13 | localStorage からの読み込み・保存 |
 | #10 | カンバンボードの表示 | frontend-developer | #8、#9 | 2.1〜2.4、3.4、4.1 | なし(画面で確認) |
 | #11 | タスク追加モーダル | frontend-developer | #10 | 4.2、6章(アクセシビリティ) | Enter キーによる送信判定 |
 | #12 | ドラッグ&ドロップによる列移動 | frontend-developer | #10 | 4.3、2.2、3.3 | なし(列移動のロジックは #8 で確認済み) |
