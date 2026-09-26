@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { createTask, moveTask } from "./operations";
+import { UUID_V4 } from "./test-patterns";
 import type { Task, TaskStatus } from "./types";
 
-const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const ISO_8601 = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 function makeTask(id: string, status: TaskStatus): Task {
