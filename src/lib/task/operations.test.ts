@@ -1,9 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createTask, moveTask } from "./operations";
 import { UUID_V4 } from "./test-patterns";
 import type { Task, TaskStatus } from "./types";
-
-const ISO_8601 = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 function makeTask(id: string, status: TaskStatus): Task {
   return {
@@ -44,10 +42,17 @@ describe("createTask", () => {
     expect(task.createdAt).toBe("2026-09-26T12:34:56.789Z");
   });
 
-  it("日時を省略した場合も createdAt は ISO 8601 形式", () => {
-    const [task] = createTask([], input);
-    expect(task.createdAt).toMatch(ISO_8601);
-    expect(Number.isNaN(Date.parse(task.createdAt))).toBe(false);
+  describe("日時を省略した場合", () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it("createdAt は現在時刻の ISO 8601 形式", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-09-26T01:02:03.456Z"));
+      const [task] = createTask([], input);
+      expect(task.createdAt).toBe("2026-09-26T01:02:03.456Z");
+    });
   });
 
   it("入力配列を変更しない", () => {
