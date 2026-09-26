@@ -13,17 +13,25 @@ const FOCUSABLE_SELECTOR =
 export function AddTaskModal({ onAdd, onClose }: AddTaskModalProps) {
   const headingId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
-  // 入力欄で押して背景で離した場合も click は背景(共通の祖先)で発生するため、押した位置を記録して区別する
+  // 押した位置と離した位置が異なる要素だと click は共通の祖先(背景)で発生するため、
+  // click の target だけでは判定できない。押した位置と離した位置をそれぞれ記録して判定する
   const pointerDownOnOverlayRef = useRef(false);
+  const pointerUpOnOverlayRef = useRef(false);
 
   function handleOverlayPointerDown(e: PointerEvent<HTMLDivElement>) {
     pointerDownOnOverlayRef.current = e.target === e.currentTarget;
   }
 
+  function handleOverlayPointerUp(e: PointerEvent<HTMLDivElement>) {
+    pointerUpOnOverlayRef.current = e.target === e.currentTarget;
+  }
+
   function handleOverlayClick(e: MouseEvent<HTMLDivElement>) {
     const pressedOnOverlay = pointerDownOnOverlayRef.current;
+    const releasedOnOverlay = pointerUpOnOverlayRef.current;
     pointerDownOnOverlayRef.current = false;
-    if (pressedOnOverlay && e.target === e.currentTarget) {
+    pointerUpOnOverlayRef.current = false;
+    if (pressedOnOverlay && releasedOnOverlay && e.target === e.currentTarget) {
       onClose();
     }
   }
@@ -54,6 +62,7 @@ export function AddTaskModal({ onAdd, onClose }: AddTaskModalProps) {
   return (
     <div
       onPointerDown={handleOverlayPointerDown}
+      onPointerUp={handleOverlayPointerUp}
       onClick={handleOverlayClick}
       className="fixed inset-0 z-50 flex overflow-y-auto bg-black/50 p-4"
     >
