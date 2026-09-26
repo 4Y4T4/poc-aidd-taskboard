@@ -27,8 +27,9 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
   const descriptionCounterId = `${id}-description-counter`;
   const descriptionErrorId = `${id}-description-error`;
 
-  const titleLength = countGraphemes(title);
-  const descriptionLength = countGraphemes(description);
+  // 検証と同じく前後の空白を除いた値で数え、カウンターの赤字とエラーの有無を一致させる
+  const titleLength = countGraphemes(title.trim());
+  const descriptionLength = countGraphemes(description.trim());
 
   function submit() {
     const result = validateTaskInput({ title, description });
