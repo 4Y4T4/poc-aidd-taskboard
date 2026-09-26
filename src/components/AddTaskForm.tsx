@@ -1,4 +1,5 @@
-import { useId, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useId, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { flushSync } from "react-dom";
 import { shouldSubmitOnEnter } from "@/lib/form/shouldSubmitOnEnter";
 import {
   countGraphemes,
@@ -18,6 +19,8 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<TaskInputErrors>({});
+  const titleRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   const id = useId();
   const titleId = `${id}-title`;
@@ -34,7 +37,9 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
   function submit() {
     const result = validateTaskInput({ title, description });
     if (!result.ok) {
-      setErrors(result.errors);
+      // フォーカス先の aria-describedby がエラー文を指してから移さないと読み上げられないため、先に DOM へ反映する
+      flushSync(() => setErrors(result.errors));
+      (result.errors.title !== undefined ? titleRef : descriptionRef).current?.focus();
       return;
     }
     onSubmit(result.value);
@@ -64,6 +69,7 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
           <span className="ml-1 text-xs font-normal text-red-600">(必須)</span>
         </label>
         <input
+          ref={titleRef}
           id={titleId}
           type="text"
           value={title}
@@ -94,6 +100,7 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
           説明
         </label>
         <textarea
+          ref={descriptionRef}
           id={descriptionId}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
