@@ -1,6 +1,7 @@
+import { useDroppable } from "@dnd-kit/core";
 import { COLUMN_LABELS } from "@/lib/task/columns";
 import type { Task, TaskStatus } from "@/lib/task/types";
-import { TaskCard } from "./TaskCard";
+import { DraggableTaskCard } from "./DraggableTaskCard";
 
 type ColumnProps = {
   status: TaskStatus;
@@ -10,12 +11,15 @@ type ColumnProps = {
 
 export function Column({ status, tasks, isLoaded }: ColumnProps) {
   const headingId = `column-heading-${status}`;
+  const { setNodeRef, isOver } = useDroppable({ id: status });
 
   return (
     <section
+      ref={setNodeRef}
       aria-labelledby={headingId}
       aria-busy={!isLoaded}
-      className="flex min-h-48 min-w-0 flex-col rounded-lg bg-gray-100 p-3"
+      data-over={isOver || undefined}
+      className="flex min-h-48 min-w-0 flex-col rounded-lg bg-gray-100 p-3 transition-colors data-over:bg-blue-50 data-over:ring-2 data-over:ring-blue-400"
     >
       <h2 id={headingId} className="mb-3 px-1 text-sm font-bold text-gray-700">
         {COLUMN_LABELS[status]}
@@ -30,7 +34,7 @@ export function Column({ status, tasks, isLoaded }: ColumnProps) {
           <ul className="flex flex-col gap-2">
             {tasks.map((task) => (
               <li key={task.id}>
-                <TaskCard task={task} />
+                <DraggableTaskCard task={task} />
               </li>
             ))}
           </ul>
