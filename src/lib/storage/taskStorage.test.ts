@@ -5,6 +5,10 @@ import { loadTasks, saveTasks } from "./taskStorage";
 
 const KEY = "taskboard:tasks";
 
+function excludedWarning(count: number): string {
+  return `保存データ内の不正なタスク${count}件を除外しました`;
+}
+
 function createStorage(initial: Record<string, string> = {}): Storage {
   const map = new Map(Object.entries(initial));
   return {
@@ -106,7 +110,7 @@ describe("taskStorage", () => {
         const result = loadTasks(storageWith({ version: 1, tasks: [valid[0], invalid, valid[1]] }));
         expect(result).toEqual(valid);
         expect(warn).toHaveBeenCalledTimes(1);
-        expect(warn.mock.calls[0][0]).toContain("1件");
+        expect(warn).toHaveBeenCalledWith(excludedWarning(1));
       });
 
       it.each([
@@ -133,7 +137,7 @@ describe("taskStorage", () => {
         const tasks = [makeTask(""), makeTask("a"), makeTask("b", { status: "x" as Task["status"] }), null];
         expect(loadTasks(storageWith({ version: 1, tasks }))).toEqual([makeTask("a")]);
         expect(warn).toHaveBeenCalledTimes(1);
-        expect(warn.mock.calls[0][0]).toContain("3件");
+        expect(warn).toHaveBeenCalledWith(excludedWarning(3));
       });
 
       it("Task の5項目以外のプロパティは持ち込まない", () => {
@@ -150,7 +154,7 @@ describe("taskStorage", () => {
       const tasks = [makeTask(""), makeTask("a", { title: "" }), makeTask("b", { createdAt: "abc" })];
       expect(loadTasks(storageWith({ version: 1, tasks }))).toEqual([]);
       expect(warn).toHaveBeenCalledTimes(1);
-      expect(warn.mock.calls[0][0]).toContain("3件");
+      expect(warn).toHaveBeenCalledWith(excludedWarning(3));
     });
 
     it("id が重複している場合は先頭に近いタスクを残し、後続を除外件数に含める", () => {
@@ -158,14 +162,15 @@ describe("taskStorage", () => {
       const tasks = [first, makeTask("b"), makeTask("a", { title: "後続1" }), makeTask("a", { title: "後続2" })];
       expect(loadTasks(storageWith({ version: 1, tasks }))).toEqual([first, makeTask("b")]);
       expect(warn).toHaveBeenCalledTimes(1);
-      expect(warn.mock.calls[0][0]).toContain("2件");
+      expect(warn).toHaveBeenCalledWith(excludedWarning(2));
     });
 
     it("不正なタスクと同じ id を持つ後続の有効なタスクは残す", () => {
       const valid = makeTask("a", { title: "有効" });
       const tasks = [makeTask("a", { title: "" }), valid];
       expect(loadTasks(storageWith({ version: 1, tasks }))).toEqual([valid]);
-      expect(warn.mock.calls[0][0]).toContain("1件");
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(warn).toHaveBeenCalledWith(excludedWarning(1));
     });
 
     it("getItem が例外を投げても例外を出さずに空配列を返し、警告を1回出す", () => {
