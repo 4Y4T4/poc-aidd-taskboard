@@ -32,6 +32,18 @@ describe("generateId", () => {
       expect(generateId()).toMatch(UUID_V4);
     });
 
+    it("乱数のバイト列を順に16進数へ変換し、version と variant を設定した UUID を組み立てる", () => {
+      vi.stubGlobal("crypto", {
+        getRandomValues: <T extends ArrayBufferView>(array: T): T => {
+          new Uint8Array(array.buffer).forEach((_, i, bytes) => {
+            bytes[i] = i;
+          });
+          return array;
+        },
+      });
+      expect(generateId()).toBe("00010203-0405-4607-8809-0a0b0c0d0e0f");
+    });
+
     it.each([
       ["すべて0", 0x00],
       ["すべて1", 0xff],
