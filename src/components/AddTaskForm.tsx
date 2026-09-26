@@ -19,6 +19,8 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<TaskInputErrors>({});
+  // role="alert" は要素が追加されたときに読み上げられるため、同じエラーのまま再送信しても読み上げるよう失敗のたびに作り直す
+  const [failedSubmitCount, setFailedSubmitCount] = useState(0);
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
@@ -38,7 +40,10 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
     const result = validateTaskInput({ title, description });
     if (!result.ok) {
       // フォーカス先の aria-describedby がエラー文を指してから移さないと読み上げられないため、先に DOM へ反映する
-      flushSync(() => setErrors(result.errors));
+      flushSync(() => {
+        setErrors(result.errors);
+        setFailedSubmitCount((count) => count + 1);
+      });
       (result.errors.title !== undefined ? titleRef : descriptionRef).current?.focus();
       return;
     }
@@ -84,7 +89,7 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
           className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-blue-600 aria-invalid:border-red-600"
         />
         {errors.title !== undefined && (
-          <p id={titleErrorId} className="mt-1 text-sm text-red-600">
+          <p key={failedSubmitCount} id={titleErrorId} role="alert" className="mt-1 text-sm text-red-600">
             {errors.title}
           </p>
         )}
@@ -114,7 +119,12 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
           className="mt-1 w-full resize-y rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-blue-600 aria-invalid:border-red-600"
         />
         {errors.description !== undefined && (
-          <p id={descriptionErrorId} className="mt-1 text-sm text-red-600">
+          <p
+            key={failedSubmitCount}
+            id={descriptionErrorId}
+            role="alert"
+            className="mt-1 text-sm text-red-600"
+          >
             {errors.description}
           </p>
         )}
