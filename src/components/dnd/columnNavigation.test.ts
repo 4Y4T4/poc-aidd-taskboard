@@ -124,6 +124,15 @@ describe("getCoordinatesInColumn", () => {
     });
   });
 
+  it("カードが移動元の列の左上より外にある場合は移動先の列の左上に収める", () => {
+    const [todo, inProgress] = horizontalColumns.map((c) => c.rect);
+    const cardRect = { ...card, left: todo.left - 10, top: todo.top - 20 };
+    expect(getCoordinatesInColumn(cardRect, todo, inProgress)).toEqual({
+      x: inProgress.left,
+      y: inProgress.top,
+    });
+  });
+
   it("カードが移動先の列より大きい場合は列の左上にそろえる", () => {
     const [todo, inProgress] = verticalColumns.map((c) => c.rect);
     const cardRect = { width: 400, height: 300, left: todo.left, top: todo.top + 100 };
