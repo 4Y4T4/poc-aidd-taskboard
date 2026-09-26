@@ -22,6 +22,8 @@ export function DraggableTaskCard({ task }: DraggableTaskCardProps) {
       ref={setNodeRef}
       {...attributes}
       {...listeners}
+      // 中身の article の文字はボタンの名前に使われず空になるため明示する。説明は最大500文字あるのでタイトルだけにする
+      aria-label={task.title}
       data-dragging={isDragging || undefined}
       className="cursor-grab touch-manipulation rounded-md select-none [-webkit-touch-callout:none] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 data-dragging:opacity-50"
     >
