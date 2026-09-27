@@ -87,6 +87,7 @@ npm run start
 - AI 駆動開発(AIDD)の考え方・開発フロー・人と AI の役割分担は [AIDD の構想](docs/aidd-concept.md) を参照してください。
 - ブランチ命名・コミットメッセージ(絵文字コミット)のルールは [CLAUDE.md](CLAUDE.md) に従います。
 - Claude Code のカスタムコマンドを使って開発します。
+    - `/implement-plan <計画したい内容>`: 計画内容を要件定義書と実行計画に追記し、ブランチにプッシュする
     - `/implement-issue <Issue番号>`: Issue の内容を実装し、PR を作成する
     - `/pr-review <PR番号>`: このリポジトリのルールに基づいて PR をレビューし、PR にコメントする
 
