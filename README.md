@@ -72,7 +72,7 @@ npm run start
 ```
 .
 ├── .claude/          # Claude Code の設定(サブエージェント・カスタムコマンド)
-├── docs/             # 要件定義書・実行計画
+├── docs/             # 要件定義書・実行計画・AIDD の構想
 ├── src/
 │   └── app/          # Next.js App Router のページ・レイアウト
 ├── CLAUDE.md         # Claude Code 向けのプロジェクト指示
@@ -84,6 +84,7 @@ npm run start
 
 ## 開発の進め方
 
+- AI 駆動開発(AIDD)の考え方・開発フロー・人と AI の役割分担は [AIDD の構想](docs/aidd-concept.md) を参照してください。
 - ブランチ命名・コミットメッセージ(絵文字コミット)のルールは [CLAUDE.md](CLAUDE.md) に従います。
 - Claude Code のカスタムコマンドを使って開発します。
     - `/implement-issue <Issue番号>`: Issue の内容を実装し、PR を作成する
