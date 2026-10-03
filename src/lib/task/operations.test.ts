@@ -70,6 +70,7 @@ describe("moveTask", () => {
     makeTask("b", "in_progress"),
     makeTask("c", "todo"),
     makeTask("d", "done"),
+    makeTask("e", "on_hold"),
   ];
 
   it("別の列への移動で status を更新する", () => {
@@ -77,9 +78,21 @@ describe("moveTask", () => {
     expect(result.find((task) => task.id === "a")?.status).toBe("done");
   });
 
+  it("on_hold の列へ移動できる", () => {
+    const result = moveTask(tasks, "b", "on_hold");
+    expect(result.find((task) => task.id === "b")?.status).toBe("on_hold");
+    expect(result.filter((task) => task.status === "on_hold").map((task) => task.id)).toEqual(["e", "b"]);
+  });
+
+  it.each<TaskStatus>(["todo", "in_progress", "done"])("on_hold の列から %s の列へ移動できる", (toStatus) => {
+    const result = moveTask(tasks, "e", toStatus);
+    expect(result.at(-1)).toEqual({ ...tasks[4], status: toStatus });
+    expect(result.filter((task) => task.status === "on_hold")).toEqual([]);
+  });
+
   it("移動したタスクを配列の末尾(移動先の列の末尾)に配置し、他のタスクの相対順は変えない", () => {
     const result = moveTask(tasks, "a", "done");
-    expect(result.map((task) => task.id)).toEqual(["b", "c", "d", "a"]);
+    expect(result.map((task) => task.id)).toEqual(["b", "c", "d", "e", "a"]);
     expect(result.filter((task) => task.status === "done").map((task) => task.id)).toEqual(["d", "a"]);
     expect(result.filter((task) => task.status === "todo").map((task) => task.id)).toEqual(["c"]);
   });

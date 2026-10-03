@@ -69,6 +69,12 @@ describe("taskStorage", () => {
       expect(warn).not.toHaveBeenCalled();
     });
 
+    it("status が on_hold のタスクを有効として復元する", () => {
+      const tasks = [makeTask("a", { status: "on_hold" }), makeTask("b", { status: "done" })];
+      expect(loadTasks(storageWith({ version: 1, tasks }))).toEqual(tasks);
+      expect(warn).not.toHaveBeenCalled();
+    });
+
     describe("データ全体が不正", () => {
       it.each([
         ["JSON として読めない", "{not json"],
@@ -207,6 +213,7 @@ describe("taskStorage", () => {
         makeTask("a", { title: "買い物", description: "牛乳\n卵" }),
         makeTask("b", { status: "in_progress", title: "👨‍👩‍👧🇯🇵" }),
         makeTask("c", { status: "done", createdAt: "2026-09-26T12:34:56.789Z" }),
+        makeTask("d", { status: "on_hold" }),
       ];
       saveTasks(tasks, storage);
       expect(loadTasks(storage)).toEqual(tasks);
