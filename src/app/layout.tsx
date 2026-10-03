@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "タスクボード",
-  description: "未着手・進行中・完了の3列でタスクを管理するカンバン型タスクボード",
+  description: "未着手・進行中・保留・完了の4列でタスクを管理するカンバン型タスクボード",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

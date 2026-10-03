@@ -79,7 +79,7 @@ export function Board() {
             onDragEnd={handleDragEnd}
             onDragCancel={() => setDraggingTask(null)}
           >
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
               {COLUMN_ORDER.map((status) => (
                 <Column
                   key={status}

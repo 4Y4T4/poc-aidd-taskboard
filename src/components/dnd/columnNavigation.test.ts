@@ -8,18 +8,34 @@ import {
   type ColumnRect,
 } from "./columnNavigation";
 
-// md 以上: 3列を横に等幅で並べる(列の高さはそろう)
+// 3列を横に等幅で並べる(列の高さはそろう)
 const horizontalColumns: ColumnRect<string>[] = [
   { id: "todo", rect: { left: 16, top: 80, width: 300, height: 400 } },
   { id: "in_progress", rect: { left: 332, top: 80, width: 300, height: 400 } },
   { id: "done", rect: { left: 648, top: 80, width: 300, height: 400 } },
 ];
 
-// md 未満: 3列を縦に積む(列の高さはタスク数で異なる)
+// 3列を縦に積む(列の高さはタスク数で異なる)
 const verticalColumns: ColumnRect<string>[] = [
   { id: "todo", rect: { left: 16, top: 80, width: 340, height: 500 } },
   { id: "in_progress", rect: { left: 16, top: 596, width: 340, height: 192 } },
   { id: "done", rect: { left: 16, top: 804, width: 340, height: 192 } },
+];
+
+// lg 以上: 4列を横に等幅で並べる(列の高さはそろう)
+const horizontalFourColumns: ColumnRect<string>[] = [
+  { id: "todo", rect: { left: 80, top: 80, width: 268, height: 400 } },
+  { id: "in_progress", rect: { left: 364, top: 80, width: 268, height: 400 } },
+  { id: "on_hold", rect: { left: 648, top: 80, width: 268, height: 400 } },
+  { id: "done", rect: { left: 932, top: 80, width: 268, height: 400 } },
+];
+
+// lg 未満: 4列を縦に積む(列の高さはタスク数で異なる)
+const verticalFourColumns: ColumnRect<string>[] = [
+  { id: "todo", rect: { left: 16, top: 80, width: 340, height: 500 } },
+  { id: "in_progress", rect: { left: 16, top: 596, width: 340, height: 192 } },
+  { id: "on_hold", rect: { left: 16, top: 804, width: 340, height: 300 } },
+  { id: "done", rect: { left: 16, top: 1120, width: 340, height: 192 } },
 ];
 
 describe("getArrowDirection", () => {
@@ -44,6 +60,14 @@ describe("isHorizontalLayout", () => {
 
   it("縦積みの列を縦積みと判定する", () => {
     expect(isHorizontalLayout(verticalColumns.map((c) => c.rect))).toBe(false);
+  });
+
+  it("4列の横並びを横並びと判定する", () => {
+    expect(isHorizontalLayout(horizontalFourColumns.map((c) => c.rect))).toBe(true);
+  });
+
+  it("4列の縦積みを縦積みと判定する", () => {
+    expect(isHorizontalLayout(verticalFourColumns.map((c) => c.rect))).toBe(false);
   });
 });
 
@@ -89,6 +113,54 @@ describe("findAdjacentColumn", () => {
 
     it.each<ArrowDirection>(["left", "right"])("左右のキー(%s)では動かない", (direction) => {
       expect(findAdjacentColumn(verticalColumns, "in_progress", direction)).toBeNull();
+    });
+  });
+
+  describe("4列の横並び", () => {
+    it.each<[string, ArrowDirection, string]>([
+      ["todo", "right", "in_progress"],
+      ["in_progress", "right", "on_hold"],
+      ["on_hold", "right", "done"],
+      ["done", "left", "on_hold"],
+      ["on_hold", "left", "in_progress"],
+      ["in_progress", "left", "todo"],
+    ])("%s から %s で %s を返す", (from, direction, expected) => {
+      expect(findAdjacentColumn(horizontalFourColumns, from, direction)?.id).toBe(expected);
+    });
+
+    it.each<[string, ArrowDirection]>([
+      ["todo", "left"],
+      ["done", "right"],
+    ])("端の列(%s)から外側(%s)へは動かない", (from, direction) => {
+      expect(findAdjacentColumn(horizontalFourColumns, from, direction)).toBeNull();
+    });
+
+    it.each<ArrowDirection>(["up", "down"])("上下のキー(%s)では動かない", (direction) => {
+      expect(findAdjacentColumn(horizontalFourColumns, "on_hold", direction)).toBeNull();
+    });
+  });
+
+  describe("4列の縦積み", () => {
+    it.each<[string, ArrowDirection, string]>([
+      ["todo", "down", "in_progress"],
+      ["in_progress", "down", "on_hold"],
+      ["on_hold", "down", "done"],
+      ["done", "up", "on_hold"],
+      ["on_hold", "up", "in_progress"],
+      ["in_progress", "up", "todo"],
+    ])("%s から %s で %s を返す", (from, direction, expected) => {
+      expect(findAdjacentColumn(verticalFourColumns, from, direction)?.id).toBe(expected);
+    });
+
+    it.each<[string, ArrowDirection]>([
+      ["todo", "up"],
+      ["done", "down"],
+    ])("端の列(%s)から外側(%s)へは動かない", (from, direction) => {
+      expect(findAdjacentColumn(verticalFourColumns, from, direction)).toBeNull();
+    });
+
+    it.each<ArrowDirection>(["left", "right"])("左右のキー(%s)では動かない", (direction) => {
+      expect(findAdjacentColumn(verticalFourColumns, "on_hold", direction)).toBeNull();
     });
   });
 
