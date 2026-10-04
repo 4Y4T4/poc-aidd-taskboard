@@ -4,6 +4,8 @@
 command -v powershell.exe >/dev/null 2>&1 || exit 0
 
 project="$(basename "${CLAUDE_PROJECT_DIR:-$PWD}")"
+# PowerShell の単一引用符の文字列に埋め込むため、' を '' にする
+project="${project//\'/\'\'}"
 
 # 外部モジュールを使わず、PowerShell 自身のアプリ ID で通知を出す
 powershell.exe -NoProfile -NonInteractive -Command "
