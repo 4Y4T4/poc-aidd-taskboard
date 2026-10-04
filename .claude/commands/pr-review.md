@@ -26,7 +26,7 @@ allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*), Bash(gh pr checks:*), Bas
 | `*.ts`・`*.tsx`・`*.mts` | `.claude/rules/typescript.md` |
 | `src/components/**`・`src/app/**`・`src/hooks/**` | `.claude/rules/components.md` |
 | `src/lib/**` | `.claude/rules/task-logic.md` |
-| `src/**/*.test.ts` | `.claude/rules/testing.md` |
+| `src/**/*.test.ts`・`src/**/*.test.tsx` | `.claude/rules/testing.md` |
 
 ルールファイルに加えて、一般的な正しさ(バグ・エッジケース・エラーハンドリングの過不足)も確認する。
 
