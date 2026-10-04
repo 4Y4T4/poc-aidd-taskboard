@@ -151,6 +151,7 @@ AI が実行してよい操作・してはいけない操作を、文章のル�
 | 確認(`ask`) | `git push --force`・`-f`・`--force-with-lease`、`git reset --hard`(オプションを後ろに書いた場合も含む) | 履歴を書き換えるため。ブランチの分割など必要な場面があるので禁止はせず、毎回人が確認する |
 | 拒否(`deny`) | `npm run dev`・`next dev`・`npx next dev`、`.env`・`.env.*` の読み取り | `CLAUDE.md` への自動追記を防ぐため(6.2)。秘密情報を読ませないため |
 | フック(`PreToolUse`) | `git commit` の前に、`CLAUDE.md` に `nextjs-agent-rules` のブロックがあればコミットを止める | 拒否をすり抜けて追記された場合でも、コミットに混ぜないため |
+| フック(`Stop`) | 応答が終わったら、Windows のデスクトップにトースト通知を出す(`.claude/hooks/notify-done.sh`。WSL 以外では何もしない) | 長い作業の完了に、画面を見ていなくても気づけるようにするため |
 
 - 許可・確認・拒否が重なる場合は、拒否 → 確認 → 許可の順に優先される。`git push` 全体を許可したうえで、force push だけを確認にしている。
 - 規則はコマンドの文字列で照合する。`git push origin HEAD --force` のようにオプションを後ろに書く形も、途中にワイルドカードを置いた規則(`git push * --force*`)で確認の対象にしている。
