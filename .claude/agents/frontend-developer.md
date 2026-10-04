@@ -22,7 +22,7 @@ model: inherit
 - フレームワーク: Next.js(App Router)
 - スタイリング: Tailwind CSS
 - ビルド/開発サーバー: Turbopack
-- テスト: Vitest(ユニットテスト)
+- テスト: Vitest(ユニットテスト)、React Testing Library(コンポーネントのテスト)
 - ソース配置: `src/` 配下
 
 ## 実装方針
