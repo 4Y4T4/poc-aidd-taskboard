@@ -81,7 +81,7 @@ src/
     - オプション名はバージョンで変わるため、実行時に `--help` で確認する(Next.js 16 以降は Turbopack が既定)。
 - Vitest: `vitest.config.mts` で `environment: "node"`、`include: ["src/**/*.test.ts"]` とし、`@/*` のパスエイリアスを解決する。
     - 6章のテスト対象はすべて純粋ロジックで、localStorage は `Storage` を引数で渡してテストするため、jsdom と Testing Library は導入しない。
-    - #25 で React Testing Library と jsdom を導入した。`vitest.config.mts` の `projects` で、`*.test.ts` は `node`、`*.test.tsx` は `jsdom` で実行する。
+    - #27 で React Testing Library と jsdom を導入した。`vitest.config.mts` の `projects` で、`*.test.ts` は `node`、`*.test.tsx` は `jsdom` で実行する。
 - `@dnd-kit/core` を追加する。`@dnd-kit/sortable` は列内の並び替え用でスコープ外のため入れない。
 - npm scripts: `dev` / `build` / `start` / `lint` / `test`(`vitest run --passWithNoTests`)/ `test:watch`。
 - `package.json` の `engines` で Node.js の要件を `^22.12.0 || ^24.0.0 || >=26.0.0` と明記する(`Intl.Segmenter` と `crypto.randomUUID` を使うため Node 20 以上が前提。そのうえで Vitest 5 の動作要件に合わせる)。
