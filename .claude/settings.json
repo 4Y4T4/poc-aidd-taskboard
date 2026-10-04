@@ -40,7 +40,13 @@
       "Bash(git push * --force*)",
       "Bash(git push * -f*)",
       "Bash(git reset --hard *)",
-      "Bash(git reset * --hard*)"
+      "Bash(git reset * --hard*)",
+      "Bash(git push * --delete*)",
+      "Bash(git push * -d *)",
+      "Bash(git branch -D *)",
+      "Bash(git branch * -D*)",
+      "Bash(git checkout -- *)",
+      "Bash(git checkout .)"
     ],
     "deny": [
       "Bash(npm run dev *)",
@@ -60,6 +66,11 @@
             "if": "Bash(git commit *)",
             "command": "grep -q \"BEGIN:nextjs-agent-rules\" \"$CLAUDE_PROJECT_DIR/CLAUDE.md\" && { echo \"CLAUDE.md に Next.js が自動で追記したブロック(nextjs-agent-rules)があるため、コミットを止めました。git checkout -- CLAUDE.md で元に戻してからコミットしてください。\" >&2; exit 2; }; exit 0",
             "statusMessage": "CLAUDE.md への自動追記を確認中"
+          },
+          {
+            "type": "command",
+            "if": "Bash(git push *)",
+            "command": "jq -r \".tool_input.command\" | grep -Eq \"git push .*[[:space:]]:[^[:space:]]\" && echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"PreToolUse\\\",\\\"permissionDecision\\\":\\\"ask\\\",\\\"permissionDecisionReason\\\":\\\"git push の :<ブランチ> はリモートのブランチを削除するため、確認します。\\\"}}\"; exit 0"
           }
         ]
       }
