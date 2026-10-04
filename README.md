@@ -71,7 +71,7 @@ npm run start
 
 ```
 .
-├── .claude/          # Claude Code の設定(サブエージェント・カスタムコマンド)
+├── .claude/          # Claude Code の設定(設定ファイル・ルールファイル・サブエージェント・カスタムコマンド)
 ├── docs/             # 要件定義書・実行計画・AIDD の構想
 ├── src/
 │   └── app/          # Next.js App Router のページ・レイアウト
