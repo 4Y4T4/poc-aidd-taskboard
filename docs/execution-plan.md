@@ -64,10 +64,12 @@ src/
 │   └── dnd/            # 当たり判定・キーボード座標など(#12)
 ├── hooks/
 │   └── useTasks.ts
-└── lib/
-    ├── task/           # 型・列の定義・バリデーション・ID生成・作成/移動(#7・#8)
-    ├── storage/        # localStorage の読み書き(#9)
-    └── form/           # Enter キーの送信判定(#11)
+├── lib/
+│   ├── task/           # 列の定義・バリデーション・ID生成・作成/移動(#7・#8)
+│   ├── storage/        # localStorage の読み書き(#9)
+│   └── form/           # Enter キーの送信判定(#11)
+└── types/
+    └── task.ts         # タスクと列の型(#25 で src/lib/task/types.ts から移動)
 ```
 
 テストファイルは対象と同じディレクトリに `*.test.ts` として置く。
