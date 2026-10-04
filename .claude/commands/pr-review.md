@@ -1,7 +1,7 @@
 ---
 description: このリポジトリ固有のルールに基づいてPRレビューを行う
 argument-hint: "[PR番号 | ブランチ名 | 省略で現在のブランチ]"
-allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*), Bash(gh pr checks:*), Bash(gh pr comment:*), Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git rev-parse:*), Read, Grep, Glob
+allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*), Bash(gh pr checks:*), Bash(gh pr comment:*), Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git rev-parse:*), Bash(git fetch:*), Bash(git show:*), Read, Grep, Glob
 ---
 
 あなたはこのリポジトリのレビュー担当です。以下の手順でPRレビューを行い、レビュー結果を対象のPRにコメントしてください。
@@ -17,25 +17,29 @@ allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*), Bash(gh pr checks:*), Bas
 - 対象が見つからない、diffが空の場合はその旨を報告して終了する。
 
 ## 2. レビューの観点
-### 共通
 
-- 一般的な正しさ(バグ・エッジケース・エラーハンドリングの過不足)
-- CLAUDE.mdのアプリケーション概要・技術スタック・スコープ外項目(ユーザー認証、複数ボード、タスクの編集・削除、期限日・担当者・優先度などの付加属性、列内での並び替え)に照らして、タスクに不要な実装が紛れ込んでいないか
-- タスクに対して不要なリファクタ・抽象化・機能追加が紛れ込んでいないか
-- コメントが「処理内容の説明」になっていないか(自明でない理由の説明以外のコメントは不要)
-- コンポーネント/関数の責務分割がCLAUDE.mdの方針(責務ごとに分割する)に沿っているか
+コーディングルールは `.claude/rules/` にまとめている。差分を見る前に、次のルールファイルを読み、差分がルールに沿っているかを確認する。
 
-### テストコードの変更
+ルールファイルは、作業ツリーではなくレビュー対象の版を読む。作業ツリーが別のブランチだったり、レビュー対象のPR自身がルールファイルを変更していたりすると、内容が食い違うため。差分の前後のコードを読むときも同じ版を使う。
 
-- `expect(true).toBe(true)`のような意味のないアサーションがないか
-- テストを通すためだけのハードコード(本番コード側の`if (testMode)`的分岐、マジックナンバー埋め込みなど)がないか
-- モックが必要最小限か、実際の動作に近い形で検証しているか
-- 具体的な入力と期待される出力を検証しているか、境界値・異常系・エラーケースを網羅しているか
-- テストケース名が何を検証しているか明確か
+- 引数が PR 番号の場合: `git fetch origin <headRefName>` のあと、`git show origin/<headRefName>:<パス>` で読む。
+- 引数がブランチ名の場合: `git show <ブランチ名>:<パス>` で読む。
+- 引数が省略された場合: 作業ツリーのファイルを Read で読む。
+
+| 変更されたファイル | 読むルールファイル |
+| --- | --- |
+| すべて | `.claude/rules/general.md` |
+| `*.ts`・`*.tsx`・`*.mts` | `.claude/rules/typescript.md` |
+| `src/components/**`・`src/app/**`・`src/hooks/**` | `.claude/rules/components.md` |
+| `src/lib/**` | `.claude/rules/task-logic.md` |
+| `src/**/*.test.ts` | `.claude/rules/testing.md` |
+
+ルールファイルに加えて、一般的な正しさ(バグ・エッジケース・エラーハンドリングの過不足)も確認する。
 
 ## 3. 指摘の作法
 
 - 指摘には必ず具体的なファイルパスと行番号を伴わせる。根拠のない曖昧な指摘はしない。
+- ルールファイルに基づく指摘には、根拠にしたルールファイル名を添える。
 - 重要度(高/中/低)を明記する。
 - 可能であれば簡潔な修正案を添える。
 - 良い点があれば併せて挙げる。

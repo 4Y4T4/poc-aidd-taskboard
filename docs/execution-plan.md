@@ -7,9 +7,9 @@
 
 - 1つのIssueを1つのPRで無理なくレビューできる粒度に分割する。ブランチは `feature/#Issue番号` とする。
 - ロジックとUIを分ける。
-    - `src/lib/task/`・`src/lib/storage/` の純粋関数(データモデル・バリデーション・作成/移動・localStorage 読み書き)は **backend-developer** が担当し、要件定義書 6章のユニットテストのうち、Enter キーの送信判定以外をここで満たす。
+    - タスクと列の型(`src/types/`)と、`src/lib/task/`・`src/lib/storage/` の純粋関数(列の定義・バリデーション・作成/移動・localStorage 読み書き)は **backend-developer** が担当し、要件定義書 6章のユニットテストのうち、Enter キーの送信判定以外をここで満たす。
     - React コンポーネント・フック・ドラッグ&ドロップと、フォーム用の純粋関数 `src/lib/form/`(Enter キーの送信判定とそのユニットテスト、#11)は **frontend-developer** が担当する。
-- 永続化は localStorage のみとする。backend-developer の定義には Route Handler への言及があるが、本プロジェクトでは Route Handler や Server Actions は作らない(各Issueにも明記済み)。
+- 永続化は localStorage のみとする。本プロジェクトでは Route Handler や Server Actions は作らない(各Issueにも明記済み)。
 - PRのレビューは毎回 `/pr-review` で行う。
 - 要件定義書にない機能は追加しない。
 
@@ -64,10 +64,12 @@ src/
 │   └── dnd/            # 当たり判定・キーボード座標など(#12)
 ├── hooks/
 │   └── useTasks.ts
-└── lib/
-    ├── task/           # 型・列の定義・バリデーション・ID生成・作成/移動(#7・#8)
-    ├── storage/        # localStorage の読み書き(#9)
-    └── form/           # Enter キーの送信判定(#11)
+├── lib/
+│   ├── task/           # 列の定義・バリデーション・ID生成・作成/移動(#7・#8)
+│   ├── storage/        # localStorage の読み書き(#9)
+│   └── form/           # Enter キーの送信判定(#11)
+└── types/
+    └── task.ts         # タスクと列の型(#25 で src/lib/task/types.ts から移動)
 ```
 
 テストファイルは対象と同じディレクトリに `*.test.ts` として置く。

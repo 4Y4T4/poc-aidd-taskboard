@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
+import type { Task, TaskStatus } from "@/types/task";
 import { createTaskStore } from "./taskStore";
-import type { Task, TaskStatus } from "./types";
 
 function makeTask(id: string, status: TaskStatus): Task {
   return {

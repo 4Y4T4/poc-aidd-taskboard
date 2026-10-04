@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
-import type { Task } from "@/lib/task/types";
 import { DESCRIPTION_MAX, TITLE_MAX } from "@/lib/task/validation";
+import type { Task } from "@/types/task";
 import { loadTasks, saveTasks } from "./taskStorage";
 
 const KEY = "taskboard:tasks";

@@ -1,6 +1,6 @@
 import { COLUMN_ORDER } from "@/lib/task/columns";
-import type { Task, TaskStatus } from "@/lib/task/types";
 import { validateTaskInput } from "@/lib/task/validation";
+import type { Task, TaskStatus } from "@/types/task";
 
 const STORAGE_KEY = "taskboard:tasks";
 const STORAGE_VERSION = 1;

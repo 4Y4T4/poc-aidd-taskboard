@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { Task, TaskStatus } from "@/types/task";
 import { createTask, moveTask } from "./operations";
 import { UUID_V4 } from "./test-patterns";
-import type { Task, TaskStatus } from "./types";
 
 function makeTask(id: string, status: TaskStatus): Task {
   return {

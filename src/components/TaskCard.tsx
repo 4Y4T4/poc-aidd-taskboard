@@ -1,4 +1,4 @@
-import type { Task } from "@/lib/task/types";
+import type { Task } from "@/types/task";
 
 type TaskCardProps = {
   task: Task;

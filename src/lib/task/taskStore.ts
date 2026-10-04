@@ -1,5 +1,5 @@
+import type { Task, TaskStatus } from "@/types/task";
 import { createTask, moveTask as moveTaskInList } from "./operations";
-import type { Task, TaskStatus } from "./types";
 import type { TaskInput } from "./validation";
 
 export type TaskStore = {

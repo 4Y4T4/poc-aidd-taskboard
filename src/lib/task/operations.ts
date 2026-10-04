@@ -1,5 +1,5 @@
+import type { Task, TaskStatus } from "@/types/task";
 import { generateId } from "./id";
-import type { Task, TaskStatus } from "./types";
 import type { TaskInput } from "./validation";
 
 export function createTask(tasks: Task[], input: TaskInput, now: Date = new Date()): Task[] {
