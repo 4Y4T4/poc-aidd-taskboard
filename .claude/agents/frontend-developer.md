@@ -29,7 +29,8 @@ model: inherit
 
 コーディングルールは `.claude/rules/` にまとめています。作業の前に、次のルールファイルを読んで従ってください。
 
-- `.claude/rules/general.md`: 全ファイル共通(スコープ・型・コメントなど)
+- `.claude/rules/general.md`: 全ファイル共通(スコープ・書き方・コメントなど)
+- `.claude/rules/typescript.md`: TypeScript の型(`any` を避ける・`import type`・型の置き場所)
 - `.claude/rules/components.md`: コンポーネント・スタイリング・アクセシビリティ
 - `.claude/rules/testing.md`: テストを追加・修正する場合
 - `.claude/rules/task-logic.md`: `src/lib/` の純粋関数を追加・修正する場合

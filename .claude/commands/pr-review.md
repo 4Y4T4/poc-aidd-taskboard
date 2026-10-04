@@ -23,6 +23,7 @@ allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*), Bash(gh pr checks:*), Bas
 | 変更されたファイル | 読むルールファイル |
 | --- | --- |
 | すべて | `.claude/rules/general.md` |
+| `*.ts`・`*.tsx`・`*.mts` | `.claude/rules/typescript.md` |
 | `src/components/**`・`src/app/**`・`src/hooks/**` | `.claude/rules/components.md` |
 | `src/lib/**` | `.claude/rules/task-logic.md` |
 | `src/**/*.test.ts` | `.claude/rules/testing.md` |
