@@ -28,7 +28,7 @@
 - フレームワーク: Next.js(App Router) — `create-next-app` で構成
 - スタイリング: Tailwind CSS
 - ビルド/開発サーバー: Turbopack
-- テスト: Vitest(ユニットテスト)
+- テスト: Vitest(ユニットテスト)、React Testing Library(コンポーネントのテスト)
 - ソース配置: `src/` 配下
 - コンポーネント方針: 責務ごとに分割する(例: ボード全体・列・タスクカード・追加フォームを別コンポーネントにする)
 

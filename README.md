@@ -23,7 +23,7 @@
 | スタイリング | Tailwind CSS 4 |
 | ビルド/開発サーバー | Turbopack |
 | ドラッグ&ドロップ | @dnd-kit/core |
-| テスト | Vitest 5 |
+| テスト | Vitest 5、React Testing Library 16(jsdom 28) |
 | Lint | ESLint 9(eslint-config-next) |
 
 ## 動作環境
@@ -64,7 +64,7 @@ npm run start
 | `npm run build` | 本番用にビルドする |
 | `npm run start` | ビルド済みのアプリを起動する(先に `npm run build` が必要) |
 | `npm run lint` | ESLint で静的解析する |
-| `npm run test` | Vitest でユニットテストを1回実行する |
+| `npm run test` | Vitest でテスト(ロジックとコンポーネント)を1回実行する |
 | `npm run test:watch` | Vitest をウォッチモードで起動する |
 
 ## ディレクトリ構成
@@ -77,10 +77,11 @@ npm run start
 │   └── app/          # Next.js App Router のページ・レイアウト
 ├── CLAUDE.md         # Claude Code 向けのプロジェクト指示
 ├── vitest.config.mts # Vitest の設定
+├── vitest.setup.ts   # コンポーネントのテストの準備(jest-dom・クリーンアップ)
 └── package.json
 ```
 
-コンポーネント・ロジックの配置予定は [実行計画の4章](docs/execution-plan.md#4-想定するディレクトリ構成) を参照してください。ユニットテストは対象と同じディレクトリに `*.test.ts` として置きます。
+コンポーネント・ロジックの配置予定は [実行計画の4章](docs/execution-plan.md#4-想定するディレクトリ構成) を参照してください。テストは対象と同じディレクトリに置きます。ロジックのテストは `*.test.ts`(node で実行)、コンポーネントのテストは `*.test.tsx`(jsdom で実行)です。
 
 ## 開発の進め方
 
