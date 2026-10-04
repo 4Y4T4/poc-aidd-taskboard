@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Claude Code の Stop フック: 応答が終わったら Windows のデスクトップにトースト通知を出す(WSL 用)。
-# powershell.exe がない環境(WSL 以外)では何もしない。
+# WSL 以外の環境でも、Stop フックをエラーにしないため
 command -v powershell.exe >/dev/null 2>&1 || exit 0
 
 project="$(basename "${CLAUDE_PROJECT_DIR:-$PWD}")"
