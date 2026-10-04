@@ -1,18 +1,12 @@
 # 共通のコーディングルール
 
-すべてのファイルに適用する。領域ごとのルールは同じディレクトリの `components.md`・`task-logic.md`・`testing.md` にある。
+すべてのファイルに適用する。TypeScript の型のルールは `typescript.md`、領域ごとのルールは `components.md`・`task-logic.md`・`testing.md` にある。
 
 ## スコープ
 
 - `docs/requirements.md` と `CLAUDE.md` にない機能は追加しない。スコープ外の一覧は `docs/requirements.md` 7章を正とする。
 - 依頼された作業に関係のないリファクタ・抽象化・共通化・将来を見越した拡張ポイントを混ぜない。
 - 既存のディレクトリ構成(`docs/execution-plan.md` 4章)と命名に合わせる。
-
-## 型
-
-- `any` を使わない。外部から来る値は `unknown` で受け、型ガードで絞る。
-- 取りうる値が決まっているものは、ユニオン型(`TaskStatus` など)で表す。
-- 型だけを使う import は `import type`(または `type` 修飾子)にする。
 
 ## 書き方
 

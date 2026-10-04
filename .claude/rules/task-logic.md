@@ -5,7 +5,7 @@ paths:
 
 # タスクのロジック・永続化のルール
 
-`src/lib/` には React・DOM に依存しない純粋関数を置く(`task/`: 型・列の定義・バリデーション・ID 生成・作成/移動、`storage/`: localStorage の読み書き、`form/`: フォームの送信判定)。
+`src/lib/` には React・DOM に依存しない純粋関数を置く(`task/`: 列の定義・バリデーション・ID 生成・作成/移動、`storage/`: localStorage の読み書き、`form/`: フォームの送信判定)。タスクと列の型は `src/types/task.ts` にある(`typescript.md`)。
 
 ## 関数の作り方
 
