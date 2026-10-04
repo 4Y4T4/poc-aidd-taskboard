@@ -1,4 +1,4 @@
-import type { TaskStatus } from "./types";
+import type { TaskStatus } from "@/types/task";
 
 export const COLUMN_ORDER: readonly TaskStatus[] = ["todo", "in_progress", "on_hold", "done"];
 

@@ -1,6 +1,6 @@
 import type { Active, UniqueIdentifier } from "@dnd-kit/core";
 import { COLUMN_ORDER } from "@/lib/task/columns";
-import type { Task, TaskStatus } from "@/lib/task/types";
+import type { Task, TaskStatus } from "@/types/task";
 
 export type TaskDragData = {
   task: Task;

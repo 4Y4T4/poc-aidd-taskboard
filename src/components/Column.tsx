@@ -1,6 +1,6 @@
 import { useDroppable } from "@dnd-kit/core";
 import { COLUMN_LABELS } from "@/lib/task/columns";
-import type { Task, TaskStatus } from "@/lib/task/types";
+import type { Task, TaskStatus } from "@/types/task";
 import { DraggableTaskCard } from "./DraggableTaskCard";
 
 type ColumnProps = {

@@ -1,5 +1,5 @@
 import { useDraggable } from "@dnd-kit/core";
-import type { Task } from "@/lib/task/types";
+import type { Task } from "@/types/task";
 import type { TaskDragData } from "./dnd/taskDragData";
 import { TaskCard } from "./TaskCard";
 

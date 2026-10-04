@@ -1,8 +1,8 @@
 import { useSyncExternalStore } from "react";
 import { loadTasks, saveTasks } from "@/lib/storage/taskStorage";
 import { createTaskStore } from "@/lib/task/taskStore";
-import type { Task, TaskStatus } from "@/lib/task/types";
 import type { TaskInput } from "@/lib/task/validation";
+import type { Task, TaskStatus } from "@/types/task";
 
 // localStorage を外部ストアとして扱い、useSyncExternalStore で購読する。
 // - サーバー描画とハイドレーション時は getServerSnapshot の null(未読み込み)を使い、
