@@ -75,6 +75,18 @@
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-after-edit.sh",
+            "statusMessage": "lint とテストを実行中"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
