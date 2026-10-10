@@ -153,7 +153,7 @@ AI が実行してよい操作・してはいけない操作を、文章のル�
 | フック(`PreToolUse`) | `git commit` の前に、`CLAUDE.md` に `nextjs-agent-rules` のブロックがあればコミットを止める | 拒否をすり抜けて追記された場合でも、コミットに混ぜないため |
 | フック(`PreToolUse`) | `git push` に `:<ブランチ>`(リモートのブランチの削除)が含まれていれば確認を求める | コロンを含む形は、許可・確認の規則では照合できなかったため |
 | フック(`PreToolUse`) | `rm` の再帰かつ強制の削除(`-rf`・`-fr`・`-r -f`・`--recursive --force` など)、force push(`--force`・`--force-with-lease`・`-f`・`+<refspec>`。オプションの位置は問わない)、`sudo` を止める。`/bin/rm` のようなパスつき、サブシェル・コマンド置換の中、`git -C <ディレクトリ> push` のようにグローバルオプションを挟んだ形も対象にする(`.claude/hooks/block-dangerous-command.sh`) | 取り返しのつかない削除・履歴の上書き・権限昇格を AI に実行させないため。force push は人が実行する |
-| フック(`PostToolUse`) | `Edit`・`Write` で `.ts`・`.tsx` を編集した後に、そのファイルの ESLint と、そのファイルに関係するテスト(`vitest related`)を実行し、失敗したら結果を Claude に返す(`.claude/hooks/check-after-edit.sh`) | Lint とテストの失敗に編集の直後に気づき、その場で直させるため。編集のたびの待ち時間を抑えるため、対象を編集したファイルに関係する範囲に絞る |
+| フック(`PostToolUse`) | `Edit`・`Write` で `.ts`・`.tsx`・`.mts` を編集した後に、そのファイルの ESLint と、そのファイルに関係するテスト(`vitest related`)を実行し、失敗したら結果を Claude に返す(`.claude/hooks/check-after-edit.sh`) | Lint とテストの失敗に編集の直後に気づき、その場で直させるため。編集のたびの待ち時間を抑えるため、対象を編集したファイルに関係する範囲に絞る |
 | フック(`Stop`) | 応答が終わったら、Windows のデスクトップにトースト通知を出す(`.claude/hooks/notify-done.sh`。WSL 以外では何もしない) | 長い作業の完了に、画面を見ていなくても気づけるようにするため |
 
 - 許可・確認・拒否が重なる場合は、拒否 → 確認 → 許可の順に優先される。`git push` 全体を許可したうえで、force push はフックで止めている(フックは許可・確認の判定より先に働く)。
