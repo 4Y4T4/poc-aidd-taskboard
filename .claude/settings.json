@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm run build)",
+      "Bash(npm run lint)",
+      "Bash(npm test)",
+      "Bash(npm run test)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(npx vitest *)",
+      "Bash(npx next start *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git fetch *)",
+      "Bash(git branch *)",
+      "Bash(git checkout *)",
+      "Bash(git switch *)",
+      "Bash(git pull *)",
+      "Bash(git merge *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(gh issue view *)",
+      "Bash(gh issue list *)",
+      "Bash(gh issue create *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr diff *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr edit *)",
+      "Bash(gh pr comment *)"
+    ],
+    "ask": [
+      "Bash(git reset --hard *)",
+      "Bash(git reset * --hard*)",
+      "Bash(git push * --delete*)",
+      "Bash(git push * -d *)",
+      "Bash(git branch -D *)",
+      "Bash(git branch * -D*)",
+      "Bash(git checkout -- *)",
+      "Bash(git checkout .)"
+    ],
+    "deny": [
+      "Bash(npm run dev *)",
+      "Bash(next dev *)",
+      "Bash(npx next dev *)",
+      "Read(./.env)",
+      "Read(./.env.*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git commit *)",
+            "command": "grep -q \"BEGIN:nextjs-agent-rules\" \"$CLAUDE_PROJECT_DIR/CLAUDE.md\" && { echo \"CLAUDE.md に Next.js が自動で追記したブロック(nextjs-agent-rules)があるため、コミットを止めました。git checkout -- CLAUDE.md で元に戻してからコミットしてください。\" >&2; exit 2; }; exit 0",
+            "statusMessage": "CLAUDE.md への自動追記を確認中"
+          },
+          {
+            "type": "command",
+            "if": "Bash(git push *)",
+            "command": "jq -r \".tool_input.command\" | grep -Eq \"git push .*[[:space:]]:[^[:space:]]\" && echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"PreToolUse\\\",\\\"permissionDecision\\\":\\\"ask\\\",\\\"permissionDecisionReason\\\":\\\"git push の :<ブランチ> はリモートのブランチを削除するため、確認します。\\\"}}\"; exit 0"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-dangerous-command.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-after-edit.sh",
+            "statusMessage": "lint とテストを実行中"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/notify-done.sh",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}
