@@ -148,14 +148,15 @@ AI が実行してよい操作・してはいけない操作を、文章のル�
 | 区分 | 対象 | 理由 |
 | --- | --- | --- |
 | 許可(`allow`) | `npm run build`・`npm run lint`・`npm test`・`npx tsc --noEmit`・`npx vitest`・`npx next start`、`git` の参照・ブランチ操作・`add`・`commit`・`push`、`gh` の Issue・PR の参照・作成・編集・コメント | 毎回行う操作で、確認を出さずに進めるため |
-| 確認(`ask`) | `git push --force`・`-f`・`--force-with-lease`、`git reset --hard`(オプションを後ろに書いた場合も含む)、ブランチの削除(`git push --delete`・`-d`、`git branch -D`)、コミットしていない変更の破棄(`git checkout -- <パス>`・`git checkout .`) | 履歴の書き換えや削除は元に戻しにくいため。ブランチの分割など必要な場面があるので禁止はせず、毎回人が確認する |
+| 確認(`ask`) | `git reset --hard`(オプションを後ろに書いた場合も含む)、ブランチの削除(`git push --delete`・`-d`、`git branch -D`)、コミットしていない変更の破棄(`git checkout -- <パス>`・`git checkout .`) | 履歴の書き換えや削除は元に戻しにくいため。必要な場面があるので禁止はせず、毎回人が確認する |
 | 拒否(`deny`) | `npm run dev`・`next dev`・`npx next dev`、`.env`・`.env.*` の読み取り | `CLAUDE.md` への自動追記を防ぐため(6.2)。秘密情報を読ませないため |
 | フック(`PreToolUse`) | `git commit` の前に、`CLAUDE.md` に `nextjs-agent-rules` のブロックがあればコミットを止める | 拒否をすり抜けて追記された場合でも、コミットに混ぜないため |
 | フック(`PreToolUse`) | `git push` に `:<ブランチ>`(リモートのブランチの削除)が含まれていれば確認を求める | コロンを含む形は、許可・確認の規則では照合できなかったため |
+| フック(`PreToolUse`) | `rm` の再帰かつ強制の削除(`-rf`・`-fr`・`-r -f`・`--recursive --force` など)、force push(`--force`・`--force-with-lease`・`-f`・`+<refspec>`。オプションの位置は問わない)、`sudo` を止める(`.claude/hooks/block-dangerous-command.sh`) | 取り返しのつかない削除・履歴の上書き・権限昇格を AI に実行させないため。force push は人が実行する |
 | フック(`Stop`) | 応答が終わったら、Windows のデスクトップにトースト通知を出す(`.claude/hooks/notify-done.sh`。WSL 以外では何もしない) | 長い作業の完了に、画面を見ていなくても気づけるようにするため |
 
-- 許可・確認・拒否が重なる場合は、拒否 → 確認 → 許可の順に優先される。`git push` 全体を許可したうえで、force push だけを確認にしている。
-- 規則はコマンドの文字列で照合する。`git push origin HEAD --force` のようにオプションを後ろに書く形も、途中にワイルドカードを置いた規則(`git push * --force*`)で確認の対象にしている。
+- 許可・確認・拒否が重なる場合は、拒否 → 確認 → 許可の順に優先される。`git push` 全体を許可したうえで、force push はフックで止めている(フックは許可・確認の判定より先に働く)。
+- 規則はコマンドの文字列で照合する。`git reset HEAD~1 --hard` のようにオプションを後ろに書く形も、途中にワイルドカードを置いた規則(`git reset * --hard*`)で確認の対象にしている。
 - `git checkout -- CLAUDE.md`(コミット前のフックが案内する戻し方)も確認の対象になる。
 - 信頼済みにしていないワークスペースでは、プロジェクト設定の `allow` が読み込まれない(headless の `claude -p` で確認した)。新しい環境では、一度 Claude Code を対話モードで起動し、信頼の確認に同意する。
 - 個人の設定は `.claude/settings.local.json` に書く。`.gitignore` には入れていないため、コミットしないよう注意する。
@@ -204,7 +205,7 @@ AI が実行してよい操作・してはいけない操作を、文章のル�
 
 - Claude Code の自動モードでは、AI が実行しようとした操作が安全判定で止められることがある。例として、ツールが生成した AI 向けの指示文を `CLAUDE.md` にコミットする操作は、人の指示があっても止められた。
 - 止められた操作を、別の方法で言い換えて実行し直すことはしない。理由を人に説明し、人が自分で実行するか、権限の設定を見直すかを決める。
-- 履歴を書き換える操作(force push・`git reset --hard`)は、`.claude/settings.json` で毎回確認する設定にしている(4.5)。ただし自動モードの安全判定は設定とは別に働くため、確認の設定があっても判定で止められることがある。
+- 履歴を書き換える操作のうち、force push はフックで止めて人が実行し、`git reset --hard` は `.claude/settings.json` で毎回確認する設定にしている(4.5)。ただし自動モードの安全判定は設定とは別に働くため、確認の設定があっても判定で止められることがある。
 
 ### 6.4 確認用スクリプトの誤り
 
