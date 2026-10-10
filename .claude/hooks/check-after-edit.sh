@@ -3,7 +3,7 @@
 changed_file="$(jq -r '.tool_input.file_path // empty')"
 
 case "$changed_file" in
-  *.ts|*.tsx) ;;
+  *.ts|*.tsx|*.mts) ;;
   *) exit 0 ;;
 esac
 
