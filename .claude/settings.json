@@ -71,6 +71,10 @@
             "type": "command",
             "if": "Bash(git push *)",
             "command": "jq -r \".tool_input.command\" | grep -Eq \"git push .*[[:space:]]:[^[:space:]]\" && echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"PreToolUse\\\",\\\"permissionDecision\\\":\\\"ask\\\",\\\"permissionDecisionReason\\\":\\\"git push の :<ブランチ> はリモートのブランチを削除するため、確認します。\\\"}}\"; exit 0"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-dangerous-command.sh"
           }
         ]
       }
