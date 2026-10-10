@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 command="$(jq -r '.tool_input.command // empty')"
+# grep は行ごとに照合するため、行末の \ で改行したコマンドを1行につなげないと、改行の後ろのオプションを見落とす
+command="${command//$'\\\n'/ }"
 
 # 取り返しのつかない削除・履歴の上書き・権限昇格を、確認なしで実行させないため
 block() {
@@ -41,7 +43,8 @@ while IFS= read -r segment; do
 done < <(segments "${prefix}rm[[:space:]][^;&|)]*")
 
 # git -C <ディレクトリ> push のように、git と push の間にグローバルオプションを挟んでもすり抜けないようにするため
-git_options='([[:space:]]+(-C|-c|--git-dir|--work-tree|--namespace)[[:space:]]+[^[:space:];&|)]+|[[:space:]]+-[^[:space:];&|)]+)*'
+# 値は "my dir" のように空白を含む引用符つきでも渡せるため、引用符で囲んだ形も値として扱う
+git_options="([[:space:]]+(-C|-c|--git-dir|--work-tree|--namespace)[[:space:]]+(\"[^\"]*\"|'[^']*'|[^[:space:];&|)]+)|[[:space:]]+-[^[:space:];&|)]+)*"
 
 # --force は push の直後とは限らず、-f や refspec の先頭の + でも強制 push になるため
 while IFS= read -r segment; do
