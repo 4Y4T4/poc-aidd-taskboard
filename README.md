@@ -91,6 +91,7 @@ npm run start
     - `/create-issue <起票したい内容>`: このリポジトリの書式に沿って Issue を起票する
     - `/implement-plan <計画したい内容>`: 計画内容を要件定義書と実行計画に追記し、ブランチにプッシュする
     - `/implement-issue <Issue番号>`: Issue の内容を実装し、PR を作成する
+    - `/taskboard-feature-dev`: 機能を TDD で実装する進め方(`/implement-issue` の実装の手順から使う)
     - `/pr-review <PR番号>`: このリポジトリのルールに基づいて PR をレビューし、PR にコメントする
 
 ## 注意事項
