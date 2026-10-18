@@ -10,9 +10,9 @@
 - タスクカードをドラッグ&ドロップで別の列に移動して、ステータスを管理します。
 - データはブラウザの localStorage に保存されます(サーバーへの保存・ユーザー認証はありません)。
 
-> 現在は開発中です。各機能の進み具合は [実行計画](docs/execution-plan.md) と GitHub の Issue を参照してください。
+> 現在は開発中です。進行中の変更は [openspec/changes/](openspec/changes/) と GitHub の Issue を参照してください。
 
-詳しい仕様は [要件定義書](docs/requirements.md) を参照してください。
+詳しい仕様は [openspec/specs/](openspec/specs/) の capability ごとの仕様を参照してください。
 
 ## 技術スタック
 
@@ -39,6 +39,19 @@ git clone https://github.com/4Y4T4/poc-aidd-taskboard.git
 cd poc-aidd-taskboard
 npm ci
 ```
+
+### OpenSpec の設定
+
+仕様の管理には [OpenSpec](https://github.com/Fission-AI/OpenSpec) を使います。CLI は `devDependencies` にバージョンを固定して入れているため、`npx openspec` で実行します(グローバルへのインストールは不要です)。
+
+Claude Code 向けのスキル(`.claude/skills/openspec-*/`)はリポジトリにコミット済みです。配布形式とワークフローの組は利用者ごとのグローバル設定(`~/.config/openspec/config.json`)に保存されるため、初回に次を実行して、このリポジトリの設定(配布形式は skills のみ、組は core)に合わせてください。グローバル設定の既定は `delivery: both` で、そのまま `openspec update` を実行すると、使っていない `.claude/commands/opsx/` が作られます。
+
+```bash
+npx openspec config set delivery skills
+npx openspec config profile core
+```
+
+CLI のバージョンを上げたときは、`npx openspec update` で生成スキルを作り直し、差分をコミットしてください。
 
 ## 起動方法
 
@@ -100,10 +113,13 @@ npm run start
 
 - AI 駆動開発(AIDD)の考え方・開発フロー・人と AI の役割分担は [AIDD の構想](docs/aidd-concept.md) を参照してください。
 - ブランチ命名・コミットメッセージ(絵文字コミット)のルールは [CLAUDE.md](CLAUDE.md) に従います。
+- 仕様の変更は、OpenSpec の change で「提案(`/openspec-propose`)→ Issue の起票(`/create-issue`)→ 実装とアーカイブ(`/implement-issue`)」の順に進めます。
 - Claude Code のスキルを使って開発します。スキルは `/スキル名` で呼び出すほか、依頼の内容に合えば AI が自動で使います。
-    - `/create-issue <起票したい内容>`: このリポジトリの書式に沿って Issue を起票する
-    - `/implement-plan <計画したい内容>`: 計画内容を要件定義書と実行計画に追記し、ブランチにプッシュする
-    - `/implement-issue <Issue番号>`: Issue の内容を実装し、PR を作成する
+    - `/openspec-explore`: 変更の内容を、提案にする前に AI と考える
+    - `/openspec-propose <変更内容>`: change(提案・仕様の差分・設計・作業)を作る
+    - `/openspec-update-change`: 作成済みの change を直す
+    - `/create-issue <change名 | 起票したい内容>`: このリポジトリの書式に沿って Issue を起票する
+    - `/implement-issue <Issue番号>`: Issue の内容を実装し、change をアーカイブして仕様に取り込み、PR を作成する(`/openspec-apply-change`・`/openspec-archive-change` を中で使う)
     - `/taskboard-feature-dev`: 機能を TDD で実装する進め方(`/implement-issue` の実装の手順から使う)
     - `/pr-review <PR番号>`: このリポジトリのルールに基づいて PR をレビューし、PR にコメントする
 
