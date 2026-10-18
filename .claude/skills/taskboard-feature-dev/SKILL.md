@@ -9,8 +9,8 @@ TaskBoardの機能をTDDで実装するときは、以下の手順で進める�
 - メインのセッションで単独で使う場合: 作業前に CLAUDE.md のブランチルールに従ってブランチを切り、実装後に `implement-issue` の「5. コミット後の確認」を行う。
 
 1. 追加する機能のユーザー操作を確認する
-    - Issue の完了条件と `docs/requirements.md` の該当章から、ユーザーの操作と期待する結果を洗い出す。
-    - `docs/requirements.md` 7章のスコープ外に当たる操作は追加しない。
+    - Issue の完了条件と、change の仕様の差分(`openspec/changes/<change名>/specs/`)・`tasks.md`、関係する `openspec/specs/` のシナリオから、ユーザーの操作と期待する結果を洗い出す。
+    - `openspec/specs/` の MUST NOT の要件(スコープ外)に当たる操作は追加しない。
 2. 失敗するテストを先に追加する
     - `.claude/rules/testing.md` に従って書く。
     - テストを実行し、実装がないことが理由で失敗することを確かめる。

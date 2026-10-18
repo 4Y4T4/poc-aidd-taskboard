@@ -1,6 +1,6 @@
 ---
-description: 起票したい内容を受け取り、このリポジトリの書式に沿ってGitHubのIssueを起票する。「Issueを起票して」「Issueを作って」「Issueにして」と依頼されたときに使う。
-argument-hint: "起票したい内容"
+description: 起票したい内容(OpenSpec の change 名、または起票したい内容)を受け取り、このリポジトリの書式に沿ってGitHubのIssueを起票する。「Issueを起票して」「Issueを作って」「Issueにして」と依頼されたときに使う。
+argument-hint: "change名 | 起票したい内容"
 ---
 以下の内容について、このリポジトリの書式に沿って GitHub の Issue を起票してください。
 
@@ -12,13 +12,16 @@ argument-hint: "起票したい内容"
 
 ## 1. 現状の把握
 
-- `CLAUDE.md`・`docs/requirements.md`・`docs/execution-plan.md` と、起票内容に関係するコード・ドキュメント(`docs/aidd-concept.md`・`.claude/` など)を読み、背景と影響する範囲を洗い出す。
+- 起票したい内容が change 名の場合は、`openspec/changes/<change名>/` の `proposal.md`・`design.md`・`tasks.md`・`specs/` の仕様の差分を読む。
+- 起票したい内容が仕様(画面の表示・操作・データ・保存の振る舞い)を変えるのに change がない場合は、起票せずに、先に `/openspec-propose` で change を作るよう案内する。`.claude/` の設定やドキュメントだけの作業など、仕様を変えない作業は change なしで起票してよい。
+- `CLAUDE.md`・関係する `openspec/specs/` と、起票内容に関係するコード・ドキュメント(`docs/aidd-concept.md`・`.claude/` など)を読み、背景と影響する範囲を洗い出す。
 - `gh issue list --state all` で、同じ内容の Issue がすでにないかを確認する。ある場合は、その番号を伝えて起票するかを確認する。
-- 起票内容が `docs/requirements.md` 7章のスコープ外に当たる場合は、その旨を伝えて進め方を確認する。
+- 起票内容が `openspec/specs/` の MUST NOT の要件(スコープ外)に当たり、change がその要件を変えていない場合は、その旨を伝えて進め方を確認する。
 
 ## 2. 決めるべき点の確認
 
 - 起票内容があいまいで、何を作るか・どこまで対応するかが決まらない場合は、本文を書く前に質問する。
+- change がある場合、仕様の決めるべき点は change の中で決める。Issue の「決めること」には、change の `design.md` に残っている未決定の点だけを書く。
 - 着手時に決めればよい点(実装方法の選択肢など)は質問せず、本文の「決めること」に案とあわせて書く。
 
 ## 3. 本文の作成と了承
@@ -31,3 +34,4 @@ argument-hint: "起票したい内容"
 - 本文を作業用のディレクトリに書き出し、`gh issue create --title "<タイトル>" --body-file <ファイル>` で起票する(本文に `` ` `` や `$` が含まれても崩れないように、`--body` には直接渡さない)。
 - ラベル・担当者・マイルストーンは、指示がない限り付けない。
 - 起票した Issue の URL と、本文の要点を報告する。
+- change が未コミットの場合は、`/implement-issue <Issue番号>` で作業ブランチにコミットすることを伝える。

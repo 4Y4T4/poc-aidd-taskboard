@@ -16,13 +16,13 @@ paths:
 ## タスクとステータス
 
 - ステータスの値は `TaskStatus` 型だけを使い、列の並びと表示名は `COLUMN_ORDER`・`COLUMN_LABELS`(`src/lib/task/columns.ts`)から取る。ステータスの一覧を別の場所に書き写さない。
-- 新しく作るタスクの `status` は `"todo"` にし、配列の末尾に追加する。列を移動したタスクは配列から取り除いて末尾に追加する(`docs/requirements.md` 3.4)。
+- 新しく作るタスクの `status` は `"todo"` にし、配列の末尾に追加する。列を移動したタスクは配列から取り除いて末尾に追加する(`openspec/specs/drag-and-drop`・`openspec/specs/task-creation`)。
 - 入力のバリデーションは `validateTaskInput` にまとめる。文字数は書記素(`countGraphemes`)で数え、上限は `TITLE_MAX`・`DESCRIPTION_MAX` を使う。
 - 結果を返す関数は `{ ok: true; value } | { ok: false; errors }` の形にし、例外で失敗を伝えない。
 
 ## 永続化
 
 - 保存先は localStorage だけにする。Route Handler・Server Actions・データベースは作らない。
-- 保存形式(キー `taskboard:tasks`・`version`・各項目)は `docs/requirements.md` 3.5 に合わせる。形式を変えるときは、既存の保存データをそのまま読み込めるようにする。
+- 保存形式(キー `taskboard:tasks`・`version`・各項目)は `openspec/specs/persistence` に合わせる。形式を変えるときは、既存の保存データをそのまま読み込めるようにする。
 - 読み込みでは例外を外に出さない。読めない・形式が不正なデータは `console.warn` で理由を出して破棄し、不正なタスクだけを除いて残りを読み込む。
 - 読み込んだタスクも、作成時と同じバリデーションとステータスの判定を通す。

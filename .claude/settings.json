@@ -31,7 +31,12 @@
       "Bash(gh pr list *)",
       "Bash(gh pr create *)",
       "Bash(gh pr edit *)",
-      "Bash(gh pr comment *)"
+      "Bash(gh pr comment *)",
+      "Bash(npx openspec list *)",
+      "Bash(npx openspec show *)",
+      "Bash(npx openspec validate *)",
+      "Bash(npx openspec status *)",
+      "Bash(npx openspec instructions *)"
     ],
     "ask": [
       "Bash(git reset --hard *)",
