@@ -65,6 +65,14 @@ describe("AddTaskForm", () => {
     expect(onSubmit).toHaveBeenCalledExactlyOnceWith({ title: "買い物", description: "", assignee: "山田" });
   });
 
+  it("期限欄で Enter を押しても追加しない", async () => {
+    const { user, onSubmit, title, dueDate } = renderForm();
+    await user.type(title, "買い物");
+    await user.type(dueDate, "2026-10-31");
+    await user.type(dueDate, "{Enter}");
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
   it(`担当者が${ASSIGNEE_MAX + 1}文字のまま追加すると、エラーを表示して担当者欄にフォーカスし、onSubmit を呼ばない`, async () => {
     const { user, onSubmit, title, assignee, submitButton } = renderForm();
     await user.type(title, "買い物");

@@ -81,6 +81,14 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
     submit();
   }
 
+  function handleDueDateKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== "Enter") {
+      return;
+    }
+    // 期限欄の Enter はブラウザの暗黙の送信で追加されてしまうため止める(Enter で送信するのはタイトル欄・担当者欄だけ)
+    e.preventDefault();
+  }
+
   function handleSingleLineKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key !== "Enter") {
       return;
@@ -227,6 +235,7 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
+            onKeyDown={handleDueDateKeyDown}
             aria-invalid={errors.dueDate !== undefined}
             aria-describedby={errors.dueDate !== undefined ? dueDateErrorId : undefined}
             className="mt-1 w-full min-w-0 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-blue-600 aria-invalid:border-red-600"
