@@ -1,8 +1,8 @@
 import type { Task, TaskStatus } from "@/types/task";
 import { generateId } from "./id";
-import type { TaskInput } from "./validation";
+import type { ValidTaskInput } from "./validation";
 
-export function createTask(tasks: Task[], input: TaskInput, now: Date = new Date()): Task[] {
+export function createTask(tasks: Task[], input: ValidTaskInput, now: Date = new Date()): Task[] {
   const task: Task = {
     id: generateId(),
     title: input.title,
@@ -10,6 +10,15 @@ export function createTask(tasks: Task[], input: TaskInput, now: Date = new Date
     status: "todo",
     createdAt: now.toISOString(),
   };
+  if (input.assignee !== undefined) {
+    task.assignee = input.assignee;
+  }
+  if (input.priority !== undefined) {
+    task.priority = input.priority;
+  }
+  if (input.dueDate !== undefined) {
+    task.dueDate = input.dueDate;
+  }
   return [...tasks, task];
 }
 

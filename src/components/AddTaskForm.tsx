@@ -1,28 +1,45 @@
-import { useId, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useId, useRef, useState, type FormEvent, type KeyboardEvent, type RefObject } from "react";
 import { flushSync } from "react-dom";
 import { shouldSubmitOnEnter } from "@/lib/form/shouldSubmitOnEnter";
+import { PRIORITY_LABELS, PRIORITY_ORDER } from "@/lib/task/priorities";
 import {
+  ASSIGNEE_MAX,
   countGraphemes,
   DESCRIPTION_MAX,
   TITLE_MAX,
   validateTaskInput,
   type TaskInput,
   type TaskInputErrors,
+  type ValidTaskInput,
 } from "@/lib/task/validation";
 
 type AddTaskFormProps = {
-  onSubmit: (input: TaskInput) => void;
+  onSubmit: (input: ValidTaskInput) => void;
   onCancel: () => void;
 };
 
 export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [assignee, setAssignee] = useState("");
+  const [priority, setPriority] = useState("");
+  const [dueDate, setDueDate] = useState("");
   const [errors, setErrors] = useState<TaskInputErrors>({});
   // role="alert" は要素が追加されたときに読み上げられるため、同じエラーのまま再送信しても読み上げるよう失敗のたびに作り直す
   const [failedSubmitCount, setFailedSubmitCount] = useState(0);
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const assigneeRef = useRef<HTMLInputElement>(null);
+  const priorityRef = useRef<HTMLSelectElement>(null);
+  const dueDateRef = useRef<HTMLInputElement>(null);
+  // エラーのある最初の欄にフォーカスするため、画面上の並びと同じ順に並べる
+  const fieldRefs: readonly [keyof TaskInput, RefObject<HTMLElement | null>][] = [
+    ["title", titleRef],
+    ["description", descriptionRef],
+    ["assignee", assigneeRef],
+    ["priority", priorityRef],
+    ["dueDate", dueDateRef],
+  ];
 
   const id = useId();
   const titleId = `${id}-title`;
@@ -31,20 +48,29 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
   const descriptionId = `${id}-description`;
   const descriptionCounterId = `${id}-description-counter`;
   const descriptionErrorId = `${id}-description-error`;
+  const assigneeId = `${id}-assignee`;
+  const assigneeCounterId = `${id}-assignee-counter`;
+  const assigneeErrorId = `${id}-assignee-error`;
+  const priorityId = `${id}-priority`;
+  const priorityErrorId = `${id}-priority-error`;
+  const dueDateId = `${id}-due-date`;
+  const dueDateErrorId = `${id}-due-date-error`;
 
   // 検証と同じく前後の空白を除いた値で数え、カウンターの赤字とエラーの有無を一致させる
   const titleLength = countGraphemes(title.trim());
   const descriptionLength = countGraphemes(description.trim());
+  const assigneeLength = countGraphemes(assignee.trim());
 
   function submit() {
-    const result = validateTaskInput({ title, description });
+    const result = validateTaskInput({ title, description, assignee, priority, dueDate });
     if (!result.ok) {
       // フォーカス先の aria-describedby がエラー文を指してから移さないと読み上げられないため、先に DOM へ反映する
       flushSync(() => {
         setErrors(result.errors);
         setFailedSubmitCount((count) => count + 1);
       });
-      (result.errors.title !== undefined ? titleRef : descriptionRef).current?.focus();
+      const firstInvalidField = fieldRefs.find(([field]) => result.errors[field] !== undefined);
+      firstInvalidField?.[1].current?.focus();
       return;
     }
     onSubmit(result.value);
@@ -55,7 +81,15 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
     submit();
   }
 
-  function handleTitleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+  function handleDueDateKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== "Enter") {
+      return;
+    }
+    // 期限欄の Enter はブラウザの暗黙の送信で追加されてしまうため止める(Enter で送信するのはタイトル欄・担当者欄だけ)
+    e.preventDefault();
+  }
+
+  function handleSingleLineKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key !== "Enter") {
       return;
     }
@@ -79,7 +113,7 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          onKeyDown={handleTitleKeyDown}
+          onKeyDown={handleSingleLineKeyDown}
           autoFocus
           aria-required="true"
           aria-invalid={errors.title !== undefined}
@@ -134,6 +168,84 @@ export function AddTaskForm({ onSubmit, onCancel }: AddTaskFormProps) {
         >
           {descriptionLength} / {DESCRIPTION_MAX}
         </p>
+      </div>
+      <div>
+        <label htmlFor={assigneeId} className="block text-sm font-semibold text-gray-800">
+          担当者
+        </label>
+        <input
+          ref={assigneeRef}
+          id={assigneeId}
+          type="text"
+          value={assignee}
+          onChange={(e) => setAssignee(e.target.value)}
+          onKeyDown={handleSingleLineKeyDown}
+          aria-invalid={errors.assignee !== undefined}
+          aria-describedby={
+            errors.assignee !== undefined ? `${assigneeErrorId} ${assigneeCounterId}` : assigneeCounterId
+          }
+          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-blue-600 aria-invalid:border-red-600"
+        />
+        {errors.assignee !== undefined && (
+          <p key={failedSubmitCount} id={assigneeErrorId} role="alert" className="mt-1 text-sm text-red-600">
+            {errors.assignee}
+          </p>
+        )}
+        <p
+          id={assigneeCounterId}
+          className={`mt-1 text-right text-xs ${assigneeLength > ASSIGNEE_MAX ? "text-red-600" : "text-gray-500"}`}
+        >
+          {assigneeLength} / {ASSIGNEE_MAX}
+        </p>
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor={priorityId} className="block text-sm font-semibold text-gray-800">
+            優先度
+          </label>
+          <select
+            ref={priorityRef}
+            id={priorityId}
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            aria-invalid={errors.priority !== undefined}
+            aria-describedby={errors.priority !== undefined ? priorityErrorId : undefined}
+            className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-blue-600 aria-invalid:border-red-600"
+          >
+            <option value="">未設定</option>
+            {PRIORITY_ORDER.map((value) => (
+              <option key={value} value={value}>
+                {PRIORITY_LABELS[value]}
+              </option>
+            ))}
+          </select>
+          {errors.priority !== undefined && (
+            <p key={failedSubmitCount} id={priorityErrorId} role="alert" className="mt-1 text-sm text-red-600">
+              {errors.priority}
+            </p>
+          )}
+        </div>
+        <div>
+          <label htmlFor={dueDateId} className="block text-sm font-semibold text-gray-800">
+            期限
+          </label>
+          <input
+            ref={dueDateRef}
+            id={dueDateId}
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            onKeyDown={handleDueDateKeyDown}
+            aria-invalid={errors.dueDate !== undefined}
+            aria-describedby={errors.dueDate !== undefined ? dueDateErrorId : undefined}
+            className="mt-1 w-full min-w-0 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-blue-600 aria-invalid:border-red-600"
+          />
+          {errors.dueDate !== undefined && (
+            <p key={failedSubmitCount} id={dueDateErrorId} role="alert" className="mt-1 text-sm text-red-600">
+              {errors.dueDate}
+            </p>
+          )}
+        </div>
       </div>
       <div className="flex justify-end gap-2">
         <button

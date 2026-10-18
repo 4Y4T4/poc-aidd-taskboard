@@ -1,11 +1,11 @@
 import type { Task, TaskStatus } from "@/types/task";
 import { createTask, moveTask as moveTaskInList } from "./operations";
-import type { TaskInput } from "./validation";
+import type { ValidTaskInput } from "./validation";
 
 export type TaskStore = {
   subscribe: (listener: () => void) => () => void;
   getSnapshot: () => Task[];
-  addTask: (input: TaskInput) => void;
+  addTask: (input: ValidTaskInput) => void;
   moveTask: (taskId: string, toStatus: TaskStatus) => void;
 };
 

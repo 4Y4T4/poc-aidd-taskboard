@@ -1,5 +1,6 @@
 import { COLUMN_ORDER } from "@/lib/task/columns";
-import { validateTaskInput } from "@/lib/task/validation";
+import { isTaskPriority } from "@/lib/task/priorities";
+import { isValidDueDate, validateTaskInput } from "@/lib/task/validation";
 import type { Task, TaskStatus } from "@/types/task";
 
 const STORAGE_KEY = "taskboard:tasks";
@@ -63,14 +64,25 @@ function parseTask(value: unknown): Task | null {
   if (!isRecord(value)) {
     return null;
   }
-  const { id, title, description, status, createdAt } = value;
+  const { id, title, description, status, createdAt, assignee, priority, dueDate } = value;
   if (typeof id !== "string" || id === "") {
     return null;
   }
   if (typeof title !== "string" || typeof description !== "string") {
     return null;
   }
-  if (!validateTaskInput({ title, description }).ok) {
+  // フォームでは空文字が「未設定」を表すが、保存データでは未設定の項目を出さないため、空の値を持つタスクは不正とする
+  if (assignee !== undefined && (typeof assignee !== "string" || assignee.trim() === "")) {
+    return null;
+  }
+  if (priority !== undefined && !isTaskPriority(priority)) {
+    return null;
+  }
+  if (dueDate !== undefined && (typeof dueDate !== "string" || !isValidDueDate(dueDate))) {
+    return null;
+  }
+  const input = { title, description, assignee: assignee ?? "", priority: priority ?? "", dueDate: dueDate ?? "" };
+  if (!validateTaskInput(input).ok) {
     return null;
   }
   if (!isTaskStatus(status)) {
@@ -79,7 +91,17 @@ function parseTask(value: unknown): Task | null {
   if (typeof createdAt !== "string" || !isIsoDateString(createdAt)) {
     return null;
   }
-  return { id, title, description, status, createdAt };
+  const task: Task = { id, title, description, status, createdAt };
+  if (assignee !== undefined) {
+    task.assignee = assignee;
+  }
+  if (priority !== undefined) {
+    task.priority = priority;
+  }
+  if (dueDate !== undefined) {
+    task.dueDate = dueDate;
+  }
+  return task;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

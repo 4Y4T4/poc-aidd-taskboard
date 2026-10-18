@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { loadTasks, saveTasks } from "@/lib/storage/taskStorage";
 import { createTaskStore } from "@/lib/task/taskStore";
-import type { TaskInput } from "@/lib/task/validation";
+import type { ValidTaskInput } from "@/lib/task/validation";
 import type { Task, TaskStatus } from "@/types/task";
 
 // localStorage を外部ストアとして扱い、useSyncExternalStore で購読する。
@@ -20,7 +20,7 @@ const EMPTY_TASKS: Task[] = [];
 export type UseTasksResult = {
   tasks: Task[];
   isLoaded: boolean;
-  addTask: (input: TaskInput) => void;
+  addTask: (input: ValidTaskInput) => void;
   moveTask: (taskId: string, toStatus: TaskStatus) => void;
 };
 
