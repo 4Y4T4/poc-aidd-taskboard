@@ -3,6 +3,8 @@ import type { Task } from "@/types/task";
 
 type TaskCardProps = {
   task: Task;
+  // ドラッグ対象の要素から aria-describedby で付加属性の行を参照するための id
+  attributesId?: string;
 };
 
 // Date で解釈すると UTC として読まれ、タイムゾーンによって前日の日付で表示されるため、文字列のまま変換する
@@ -10,7 +12,7 @@ function formatDueDate(dueDate: string): string {
   return dueDate.replaceAll("-", "/");
 }
 
-export function TaskCard({ task }: TaskCardProps) {
+export function TaskCard({ task, attributesId }: TaskCardProps) {
   const attributes: { key: string; text: string }[] = [];
   if (task.priority !== undefined) {
     attributes.push({ key: "priority", text: `優先度: ${PRIORITY_LABELS[task.priority]}` });
@@ -26,7 +28,7 @@ export function TaskCard({ task }: TaskCardProps) {
     <article className="rounded-md border border-gray-200 bg-white p-3 shadow-sm">
       <h3 className="text-sm font-semibold text-gray-900 wrap-anywhere">{task.title}</h3>
       {attributes.length > 0 && (
-        <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-gray-600">
+        <ul id={attributesId} className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-gray-600">
           {attributes.map((attribute) => (
             <li key={attribute.key} className="min-w-0 wrap-anywhere">
               {attribute.text}
