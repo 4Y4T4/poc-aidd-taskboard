@@ -35,6 +35,11 @@
 - ソース配置: `src/` 配下
 - コンポーネント方針: 責務ごとに分割する(例: ボード全体・列・タスクカード・追加フォームを別コンポーネントにする)
 
+## OpenSpec
+
+- 仕様は `openspec/specs/` を正とし、仕様の変更は `openspec/changes/` の change(提案 → 実装 → アーカイブ)で行う。
+- OpenSpec の CLI は `devDependencies` に固定したものを `npx openspec` で実行する。OpenSpec のスキルに `openspec <コマンド>` と書かれていても、`npx openspec <コマンド>` に読み替える(グローバルにはインストールしていないため)。
+
 ## Git操作について
 
 - git操作を行う際は `gh` コマンドを使用してください。
