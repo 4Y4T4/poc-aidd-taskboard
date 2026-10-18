@@ -72,17 +72,29 @@ npm run start
 
 ```
 .
-├── .claude/          # Claude Code の設定(設定ファイル・ルールファイル・サブエージェント・スキル)
-├── docs/             # 要件定義書・実行計画・AIDD の構想
+├── .claude/              # Claude Code の設定(設定ファイル・ルールファイル・サブエージェント・スキル)
+├── docs/                 # AIDD の構想
+├── openspec/             # OpenSpec の設定・仕様・変更
+│   ├── config.yaml       # 仕様を書くときに AI へ渡す前提とルール
+│   ├── specs/            # capability ごとの仕様(仕様の正)
+│   └── changes/          # 進行中の変更(change)と、アーカイブ済みの変更(archive/)
 ├── src/
-│   └── app/          # Next.js App Router のページ・レイアウト
-├── CLAUDE.md         # Claude Code 向けのプロジェクト指示
-├── vitest.config.mts # Vitest の設定
-├── vitest.setup.ts   # コンポーネントのテストの準備(jest-dom・クリーンアップ)
+│   ├── app/              # Next.js App Router のページ・レイアウト
+│   ├── components/       # ヘッダー・ボード・列・タスクカード・追加モーダル・追加フォーム
+│   │   └── dnd/          # ドラッグ&ドロップの当たり判定・キーボード操作の座標・読み上げ文言
+│   ├── hooks/            # タスクの状態を扱うフック(useTasks)
+│   ├── lib/
+│   │   ├── task/         # 列の定義・優先度・バリデーション・ID の生成・作成と移動・ストア
+│   │   ├── storage/      # localStorage の読み書き
+│   │   └── form/         # Enter キーの送信判定
+│   └── types/            # タスクと列の型
+├── CLAUDE.md             # Claude Code 向けのプロジェクト指示
+├── vitest.config.mts     # Vitest の設定
+├── vitest.setup.ts       # コンポーネントのテストの準備(jest-dom・クリーンアップ)
 └── package.json
 ```
 
-コンポーネント・ロジックの配置予定は [実行計画の4章](docs/execution-plan.md#4-想定するディレクトリ構成) を参照してください。テストは対象と同じディレクトリに置きます。ロジックのテストは `*.test.ts`(node で実行)、コンポーネントのテストは `*.test.tsx`(jsdom で実行)です。
+テストは対象と同じディレクトリに置きます。ロジックのテストは `*.test.ts`(node で実行)、コンポーネントのテストは `*.test.tsx`(jsdom で実行)です。
 
 ## 開発の進め方
 
