@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
-import { DESCRIPTION_MAX, TITLE_MAX } from "@/lib/task/validation";
+import { ASSIGNEE_MAX, DESCRIPTION_MAX, TITLE_MAX } from "@/lib/task/validation";
 import type { Task } from "@/types/task";
 import { loadTasks, saveTasks } from "./taskStorage";
 
@@ -69,6 +69,26 @@ describe("taskStorage", () => {
       expect(warn).not.toHaveBeenCalled();
     });
 
+    it("担当者・優先度・期限を持たない既存の保存データを、項目を足さずにそのまま復元する", () => {
+      const tasks = [makeTask("a", { status: "done", description: "説明" }), makeTask("b")];
+      const result = loadTasks(storageWith({ version: 1, tasks }));
+      expect(result).toEqual(tasks);
+      for (const task of result) {
+        expect(Object.keys(task).sort()).toEqual(["createdAt", "description", "id", "status", "title"]);
+      }
+      expect(warn).not.toHaveBeenCalled();
+    });
+
+    it("担当者・優先度・期限を持つタスクと持たないタスクが混在していても、すべて復元する", () => {
+      const tasks = [
+        makeTask("a", { assignee: "山田", priority: "high", dueDate: "2026-10-31" }),
+        makeTask("b"),
+        makeTask("c", { priority: "low" }),
+      ];
+      expect(loadTasks(storageWith({ version: 1, tasks }))).toEqual(tasks);
+      expect(warn).not.toHaveBeenCalled();
+    });
+
     it("status が on_hold のタスクを有効として復元する", () => {
       const tasks = [makeTask("a", { status: "on_hold" }), makeTask("b", { status: "done" })];
       expect(loadTasks(storageWith({ version: 1, tasks }))).toEqual(tasks);
@@ -111,6 +131,19 @@ describe("taskStorage", () => {
         ["createdAt が日時として解釈できない", makeTask("x", { createdAt: "abc" })],
         ["createdAt が ISO 8601 の往復で一致しない", makeTask("x", { createdAt: "2026-09-24" })],
         ["createdAt が存在しない日付", makeTask("x", { createdAt: "2026-02-30T00:00:00.000Z" })],
+        ["assignee が文字列でない", { ...makeTask("x"), assignee: 1 }],
+        ["assignee が null", { ...makeTask("x"), assignee: null }],
+        ["assignee が空文字", makeTask("x", { assignee: "" })],
+        ["assignee が空白のみ", makeTask("x", { assignee: " \t\n　" })],
+        ["assignee が21文字", makeTask("x", { assignee: "あ".repeat(ASSIGNEE_MAX + 1) })],
+        ["priority が未定義の値", { ...makeTask("x"), priority: "urgent" }],
+        ["priority が空文字", { ...makeTask("x"), priority: "" }],
+        ["priority が null", { ...makeTask("x"), priority: null }],
+        ["dueDate が文字列でない", { ...makeTask("x"), dueDate: 20261031 }],
+        ["dueDate が空文字", makeTask("x", { dueDate: "" })],
+        ["dueDate が YYYY-MM-DD 形式でない", makeTask("x", { dueDate: "2026/10/31" })],
+        ["dueDate が時刻付き", makeTask("x", { dueDate: "2026-10-31T00:00:00.000Z" })],
+        ["dueDate が存在しない日付", makeTask("x", { dueDate: "2026-02-30" })],
       ])("%sのタスクを除外し、除外件数を警告する", (_, invalid) => {
         const valid = [makeTask("a"), makeTask("b")];
         const result = loadTasks(storageWith({ version: 1, tasks: [valid[0], invalid, valid[1]] }));
@@ -127,6 +160,14 @@ describe("taskStorage", () => {
         ["description が空文字", { description: "" }],
         ["description が500文字", { description: "あ".repeat(DESCRIPTION_MAX) }],
         ["description が前後の空白を除いて500文字", { description: `\n${"あ".repeat(DESCRIPTION_MAX)} ` }],
+        ["assignee が1文字", { assignee: "山" }],
+        ["assignee が20文字", { assignee: "あ".repeat(ASSIGNEE_MAX) }],
+        ["priority が high", { priority: "high" as const }],
+        ["priority が medium", { priority: "medium" as const }],
+        ["priority が low", { priority: "low" as const }],
+        ["dueDate が過去の日付", { dueDate: "2000-01-01" }],
+        ["dueDate がうるう年の2月29日", { dueDate: "2028-02-29" }],
+        ["担当者・優先度・期限をすべて持つ", { assignee: "山田", priority: "high" as const, dueDate: "2026-10-31" }],
       ])("%sのタスクは有効", (_, overrides) => {
         const task = makeTask("a", overrides);
         expect(loadTasks(storageWith({ version: 1, tasks: [task] }))).toEqual([task]);
@@ -146,13 +187,30 @@ describe("taskStorage", () => {
         expect(warn).toHaveBeenCalledWith(excludedWarning(3));
       });
 
-      it("Task の5項目以外のプロパティは持ち込まない", () => {
+      it("Task の項目以外のプロパティは持ち込まない", () => {
         const task = makeTask("a");
-        const result = loadTasks(storageWith({ version: 1, tasks: [{ ...task, priority: "high" }] }));
+        const result = loadTasks(storageWith({ version: 1, tasks: [{ ...task, tags: ["買い物"] }] }));
         expect(result).toEqual([task]);
         expect(Object.keys(result[0]).sort()).toEqual(
           ["createdAt", "description", "id", "status", "title"],
         );
+      });
+
+      it("不正な担当者・優先度・期限を持つタスクだけを除外し、残りを読み込む", () => {
+        const valid = [
+          makeTask("a"),
+          makeTask("b", { assignee: "山田", priority: "medium", dueDate: "2026-10-31" }),
+        ];
+        const tasks = [
+          valid[0],
+          makeTask("x", { assignee: "あ".repeat(ASSIGNEE_MAX + 1) }),
+          { ...makeTask("y"), priority: "urgent" },
+          makeTask("z", { dueDate: "2026-02-30" }),
+          valid[1],
+        ];
+        expect(loadTasks(storageWith({ version: 1, tasks }))).toEqual(valid);
+        expect(warn).toHaveBeenCalledTimes(1);
+        expect(warn).toHaveBeenCalledWith(excludedWarning(3));
       });
     });
 
@@ -190,6 +248,16 @@ describe("taskStorage", () => {
   });
 
   describe("saveTasks", () => {
+    it("未設定の担当者・優先度・期限は保存データに出さない", () => {
+      const storage = createStorage();
+      saveTasks([makeTask("a"), makeTask("b", { priority: "low" })], storage);
+      const saved = JSON.parse(storage.getItem(KEY) ?? "");
+      expect(Object.keys(saved.tasks[0]).sort()).toEqual(["createdAt", "description", "id", "status", "title"]);
+      expect(Object.keys(saved.tasks[1]).sort()).toEqual(
+        ["createdAt", "description", "id", "priority", "status", "title"],
+      );
+    });
+
     it("キー taskboard:tasks に version 1 の形式で保存する", () => {
       const storage = createStorage();
       const tasks = [makeTask("a")];
@@ -214,6 +282,7 @@ describe("taskStorage", () => {
         makeTask("b", { status: "in_progress", title: "👨‍👩‍👧🇯🇵" }),
         makeTask("c", { status: "done", createdAt: "2026-09-26T12:34:56.789Z" }),
         makeTask("d", { status: "on_hold" }),
+        makeTask("e", { assignee: "山田", priority: "high", dueDate: "2026-10-31" }),
       ];
       saveTasks(tasks, storage);
       expect(loadTasks(storage)).toEqual(tasks);

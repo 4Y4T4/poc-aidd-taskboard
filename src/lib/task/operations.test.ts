@@ -55,6 +55,28 @@ describe("createTask", () => {
     });
   });
 
+  it("付加属性が未設定なら、担当者・優先度・期限の項目を持たない", () => {
+    const [task] = createTask([], input);
+    expect(Object.keys(task).sort()).toEqual(["createdAt", "description", "id", "status", "title"]);
+  });
+
+  it("担当者・優先度・期限をすべて設定すると、それぞれの値を持つ", () => {
+    const [task] = createTask([], { ...input, assignee: "山田", priority: "high", dueDate: "2026-10-31" });
+    expect(task).toMatchObject({ assignee: "山田", priority: "high", dueDate: "2026-10-31" });
+  });
+
+  it.each([
+    ["担当者", { assignee: "山田" }, "assignee"],
+    ["優先度", { priority: "low" as const }, "priority"],
+    ["期限", { dueDate: "2026-10-31" }, "dueDate"],
+  ])("%sだけを設定すると、その項目だけを持つ", (_, attributes, key) => {
+    const [task] = createTask([], { ...input, ...attributes });
+    expect(task).toMatchObject(attributes);
+    expect(Object.keys(task).sort()).toEqual(
+      ["createdAt", "description", "id", "status", "title", key].sort(),
+    );
+  });
+
   it("入力配列を変更しない", () => {
     const tasks = [makeTask("a", "todo")];
     const snapshot = structuredClone(tasks);
