@@ -4,7 +4,7 @@
 
 ## スコープ
 
-- `docs/requirements.md` と `CLAUDE.md` にない機能は追加しない。スコープ外の一覧は `docs/requirements.md` 7章を正とする。
+- `openspec/specs/`(実装中の change があれば、その仕様の差分を含む)と `CLAUDE.md` にない機能は追加しない。スコープ外は `openspec/specs/` の MUST NOT の要件を正とする。
 - 依頼された作業に関係のないリファクタ・抽象化・共通化・将来を見越した拡張ポイントを混ぜない。
 - 既存のディレクトリ構成(`README.md` の「ディレクトリ構成」)と命名に合わせる。
 
