@@ -5,15 +5,19 @@ context: |
   All artifacts must be written in Japanese.
   Keep OpenSpec structural headings and SHALL/MUST keywords in English.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always state what is out of scope
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  未着手 / 進行中 / 保留 / 完了 の4列で構成されるカンバン型のタスク管理アプリ(利用者は1名・ボードは1つ・認証なし)。
+  技術スタック: TypeScript、Next.js(App Router・Turbopack)、Tailwind CSS、@dnd-kit/core、Vitest と React Testing Library。ソースは src/ 配下に置く。
+  データはブラウザの localStorage にだけ保存する。Route Handler・Server Actions・サーバー側への保存は作らない。
+  capability は board / task-model / task-creation / drag-and-drop / persistence の5つ。新しい capability は、既存のどれにも収まらない場合だけ作る。
+  要件の本文は日本語で書き、述語の位置に英字の SHALL(禁止は MUST NOT)を入れる。1つの要件には1つの振る舞いだけを書く。
+  スコープ外の機能は、各 capability の MUST NOT の要件を正とする。
+  CLAUDE.md と .claude/rules/ のルールに従う。
+
+rules:
+  tasks:
+    - コードを実装するタスクは、テストを先に書く順に並べる(.claude/skills/taskboard-feature-dev/SKILL.md の TDD の手順)
+    - データ層(src/types・src/lib/task・src/lib/storage)と UI のタスクを分け、それぞれ担当のサブエージェント(backend-developer / frontend-developer)を書く
+    - 最後に npm run build / npx tsc --noEmit / npm run lint / npm test の確認と、画面での確認のタスクを置く
 
 # Per-operation guidance (optional)
 # Add advisory guidance for how apply and archive work should be conducted.
