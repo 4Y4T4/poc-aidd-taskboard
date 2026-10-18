@@ -11,25 +11,30 @@ Issue#$ARGUMENTS を実装し、プルリクエストを作成してください
 ## 1. Issue と関連ドキュメントの確認
 
 - `gh issue view $ARGUMENTS` で、Issue の概要・対応内容・完了条件を確認する。
-- Issue に書かれている `docs/requirements.md` の章と `docs/execution-plan.md` を読む。
+- Issue が参照する OpenSpec の change(`openspec/changes/<change名>/` の `proposal.md`・`design.md`・`tasks.md`・`specs/` の仕様の差分)と、差分が対象にしている `openspec/specs/<capability>/spec.md` を読む。
+    - change は、main にあるか、`/openspec-propose` で手元に作って未コミットのまま置かれている。どちらにもない場合は、作業に入らず報告する。
+    - `.claude/` の設定やドキュメントだけの Issue など、仕様を変えない Issue には change がない。その場合は Issue 本文と、関係する `openspec/specs/` を読む。
 - 依存する Issue の PR がマージ済みかを確認する。未マージの場合は、その旨を報告して着手してよいかを確認する。
 
 ## 2. ブランチの作成
 
 - 最新の `main` を取り込み、そこから CLAUDE.md の命名規則(`feature/#$ARGUMENTS` など)に従ってブランチを切る。
 - 作業ツリーに未コミットの変更がある場合は、先に内容を確認して報告する。
+    - 未コミットの change(`openspec/changes/<change名>/`)は、ブランチを切ったあとで最初のコミット(`📝`)にする。
 
 ## 3. 実装
 
-- `docs/execution-plan.md` で Issue に割り当てられているサブエージェント(Issue 本文の「担当」)に実装を依頼する。
+- change がある場合は、`/openspec-apply-change` の進め方で `tasks.md` のタスクを上から順に進め、終わったタスクに印(`- [x]`)を付ける。
+- 各タスクは、`tasks.md` に書かれた担当のサブエージェント(`.claude/agents/`)に実装を依頼する。change がない場合は、Issue 本文の「担当」に依頼する。
 - 担当が決まっていない、または専門範囲に合わない作業(ドキュメント作成など)の場合は、最適な方法を選び、その理由を報告する。
 - サブエージェントへの依頼文には、次の内容を含める。
-    - 参照すべき要件定義書の章と、既存のコード
-    - Issue の対応内容と完了条件
+    - 参照すべき change のファイル(仕様の差分・`design.md`)と `openspec/specs/` の capability、既存のコード
+    - 依頼するタスクと、Issue の完了条件
     - 実装の進め方: コードを実装する場合は、`.claude/skills/taskboard-feature-dev/SKILL.md` を読み、その手順(TDD)で進めること(サブエージェントはスキルを呼び出せないため、ファイルのパスを渡して読ませる)
-    - してはいけないこと: コミットしない、`next dev` を起動しない(CLAUDE.md に自動で追記されるため)、スコープ外の機能を追加しない
+    - してはいけないこと: コミットしない、`next dev` を起動しない(CLAUDE.md に自動で追記されるため)、スコープ外の機能を追加しない、`tasks.md` 以外の change のファイルを書き換えない
     - 報告してほしい内容: 作成・変更したファイル、設計判断、画面確認で見るべき点
-- サブエージェントの報告だけで判断せず、差分を自分で読んで、Issue・要件定義書と食い違いがないかを確認する。
+- サブエージェントの報告だけで判断せず、差分を自分で読んで、Issue・仕様の差分のシナリオと食い違いがないかを確認する。
+- 実装中に仕様を変える必要が出た場合は、実装で合わせ込まず、その旨を報告して進め方を確認する。決まった内容は `/openspec-update-change` で change に反映する。
 
 ## 4. コミット
 
@@ -43,6 +48,7 @@ Issue#$ARGUMENTS を実装し、プルリクエストを作成してください
 2. `npx tsc --noEmit`
 3. `npm run lint`
 4. `npm test`
+5. `npx openspec validate --all --strict`
 
 Issue の完了条件に画面での確認がある場合は、次のように確認する。
 
@@ -54,8 +60,18 @@ Issue の完了条件に画面での確認がある場合は、次のように�
 
 確認で不具合が見つかった場合は、修正して別のコミットにし、もう一度確認する。
 
-## 6. プルリクエストの作成
+## 6. 仕様への取り込み(アーカイブ)
+
+change がある場合は、確認がすべて終わってから行う。仕様とコードを同じ PR でマージするため、PR の作成前に行う。
+
+- `tasks.md` のタスクがすべて終わっていることを確認する。終わっていないタスクがあれば、理由を報告して進め方を確認する。
+- `/openspec-archive-change` で change をアーカイブし、仕様の差分を `openspec/specs/` に取り込む。
+- `npx openspec validate --all --strict` が成功することと、取り込まれた `openspec/specs/` の差分が change の仕様の差分どおりであることを確認する。
+- `📝` を付けてコミットする。
+
+## 7. プルリクエストの作成
 
 - `Closes #$ARGUMENTS` を含め、「概要」「変更内容」「確認結果」「補足」の構成で本文を書く。
+- 「変更内容」には、change 名と、仕様が更新された capability を書く。
 - 「確認結果」には、実行したチェックと画面確認の項目・結果を書く。
 - headless 環境では確認できなかった項目(実機のタッチ操作・実際の IME・スクリーンリーダーの読み上げなど)は「補足」に明記する。

@@ -1,7 +1,7 @@
 ---
 description: このリポジトリ固有のルールに基づいてPRレビューを行う。PR番号・ブランチ名を指定して、または現在のブランチについて「レビューして」と依頼されたときに使う。
 argument-hint: "[PR番号 | ブランチ名 | 省略で現在のブランチ]"
-allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*), Bash(gh pr checks:*), Bash(gh pr comment:*), Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git rev-parse:*), Bash(git fetch:*), Bash(git show:*), Read, Grep, Glob
+allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*), Bash(gh pr checks:*), Bash(gh pr comment:*), Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git rev-parse:*), Bash(git fetch:*), Bash(git show:*), Bash(npx openspec validate:*), Bash(npx openspec show:*), Read, Grep, Glob
 ---
 
 あなたはこのリポジトリのレビュー担当です。以下の手順でPRレビューを行い、レビュー結果を対象のPRにコメントしてください。
@@ -35,6 +35,12 @@ allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*), Bash(gh pr checks:*), Bas
 | `src/**/*.test.ts`・`src/**/*.test.tsx` | `.claude/rules/testing.md` |
 
 ルールファイルに加えて、一般的な正しさ(バグ・エッジケース・エラーハンドリングの過不足)も確認する。
+
+仕様(`openspec/`)との整合も確認する。
+
+- 実装が、関係する `openspec/specs/` の要件・シナリオと食い違っていないか。MUST NOT の要件(スコープ外)に当たる機能を追加していないか。
+- コードが仕様を変えている場合に、change がアーカイブされ(`openspec/changes/archive/` に移り)、仕様の差分が `openspec/specs/` に取り込まれているか。未アーカイブの change が残っていないか。
+- `npx openspec validate --all --strict` が成功するか(引数が PR 番号・ブランチ名の場合は、作業ツリーがレビュー対象の版と同じときだけ実行し、違う場合は実行しなかったことを書く)。
 
 ## 3. 指摘の作法
 
