@@ -18,7 +18,7 @@
 
 - 担当: <サブエージェント名>(理由があれば括弧で添える)
 - 依存: #<Issue番号>(先にマージが必要な Issue があれば書く)
-- change: `openspec/changes/<change名>/`(仕様を変える場合)
+- change: `<change名>`(仕様を変える場合。`openspec/changes/<change名>/` にあり、アーカイブ後は `openspec/changes/archive/<日付>-<change名>/` に移る)
 - 参照: `openspec/specs/<capability>`、関係するファイル・ドキュメント
 
 ## 決めること(着手前に確認する)
