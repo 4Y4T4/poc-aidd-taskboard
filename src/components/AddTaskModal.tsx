@@ -1,9 +1,9 @@
 import { useId, useRef, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
-import type { TaskInput } from "@/lib/task/validation";
+import type { ValidTaskInput } from "@/lib/task/validation";
 import { AddTaskForm } from "./AddTaskForm";
 
 type AddTaskModalProps = {
-  onAdd: (input: TaskInput) => void;
+  onAdd: (input: ValidTaskInput) => void;
   onClose: () => void;
 };
 

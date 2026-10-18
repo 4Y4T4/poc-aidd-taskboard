@@ -15,7 +15,7 @@ import { useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { useTasks } from "@/hooks/useTasks";
 import { COLUMN_ORDER } from "@/lib/task/columns";
-import type { TaskInput } from "@/lib/task/validation";
+import type { ValidTaskInput } from "@/lib/task/validation";
 import type { Task } from "@/types/task";
 import { AddTaskModal } from "./AddTaskModal";
 import { Column } from "./Column";
@@ -45,7 +45,7 @@ export function Board() {
     addButtonRef.current?.focus();
   }
 
-  function handleAdd(input: TaskInput) {
+  function handleAdd(input: ValidTaskInput) {
     addTask(input);
     closeAddModal();
   }
